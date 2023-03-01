@@ -4,7 +4,7 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const input = (props) => {
-  const { placeHolder, selectionColor, iconName, setValue } = props;
+  const { placeHolder, selectionColor, iconName, setValue,secureTextEntry,textContentType} = props;
   return (
     <View style={styles.inputContainer}>
       <Ionicons name={iconName} size={moderateScale(30)} color={"#7b8ca6"} />
@@ -13,6 +13,8 @@ const input = (props) => {
         style={styles.input}
         placeholder={placeHolder}
         selectionColor={selectionColor}
+        secureTextEntry={secureTextEntry}
+        textContentType={textContentType}
         onChangeText={(value) => {
           setValue(value);
         }}
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
     marginLeft: horizontalScale(10),
     padding: moderateScale(7),
     paddingLeft: 0,
-    width: moderateScale(290),
+    width: moderateScale(250),
     fontSize: moderateScale(15),
   },
 });

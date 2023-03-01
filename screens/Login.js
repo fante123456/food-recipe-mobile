@@ -38,12 +38,16 @@ export default function Login() {
             selectionColor={"orange"}
             iconName="at-outline"
             setValue={setEmail}
+            secureTextEntry={false}
+            textContentType="emailAddress"
           />
           <CustomInput
             placeHolder={"Password"}
             selectionColor={"orange"}
             iconName="lock-closed-outline"
+            textContentType="password"
             setValue={setPassword}
+            secureTextEntry={true}
           />
         </View>
         <TouchableOpacity
@@ -66,7 +70,7 @@ const styles = StyleSheet.create({
   },
   picture: {
     height: moderateScale(200),
-    marginTop: verticalScale(80),
+    marginTop: verticalScale(50),
     justifyContent: "center",
     alignItems: "center",
   },
