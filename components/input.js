@@ -4,23 +4,53 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const input = (props) => {
-  const { placeHolder, selectionColor, iconName, setValue,secureTextEntry,textContentType} = props;
-  return (
-    <View style={styles.inputContainer}>
-      <Ionicons name={iconName} size={moderateScale(30)} color={"#7b8ca6"} />
+  // const {
+  //   placeHolder,
+  //   selectionColor,
+  //   iconName,
+  //   setValue,
+  //   secureTextEntry,
+  //   textContentType,
+  // } = props;
 
-      <TextInput
-        style={styles.input}
-        placeholder={placeHolder}
-        selectionColor={selectionColor}
-        secureTextEntry={secureTextEntry}
-        textContentType={textContentType}
-        onChangeText={(value) => {
-          setValue(value);
-        }}
-      ></TextInput>
-    </View>
-  );
+  return Object.values(props).map((value) => {
+    return (
+      <View style={styles.inputContainer} key={value.id}>
+        <Ionicons
+          name={value.iconName}
+          size={moderateScale(30)}
+          color={"#7b8ca6"}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder={value.placeHolder}
+          selectionColor={value.selectionColor}
+          secureTextEntry={value.secureTextEntry}
+          textContentType={value.textContentType}
+          onChangeText={(val) => {
+            value.setValue(val);
+          }}
+        />
+      </View>
+    );
+  });
+
+  // return (
+  //   <View style={styles.inputContainer}>
+  //     <Ionicons name={iconName} size={moderateScale(30)} color={"#7b8ca6"} />
+
+  //     <TextInput
+  //       style={styles.input}
+  //       placeholder={placeHolder}
+  //       selectionColor={selectionColor}
+  //       secureTextEntry={secureTextEntry}
+  //       textContentType={textContentType}
+  //       onChangeText={(value) => {
+  //         setValue(value);
+  //       }}
+  //     ></TextInput>
+  //   </View>
+  // );
 };
 
 export default input;

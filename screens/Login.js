@@ -13,9 +13,32 @@ import CookingPicture from "../assets/cooking.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomInput from "../components/input";
 import RoundedButton from "../components/RoundedButton";
+import Divider from "../components/Divider";
+
 export default function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const customInputs = [
+    {
+      id: 1,
+      placeHolder: "Email Id",
+      selectionColor: "orange",
+      iconName: "at-outline",
+      setValue: setEmail,
+      secureTextEntry: false,
+      textContentType: "emailAddress",
+    },
+    {
+      id: 2,
+      placeHolder: "Password",
+      selectionColor: "orange",
+      iconName: "lock-closed-outline",
+      textContentType: "password",
+      setValue: setPassword,
+      secureTextEntry: true,
+    },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -33,31 +56,53 @@ export default function Login() {
           {/* Header Text */}
           <Text style={styles.headerText}>Login</Text>
           {/* input details */}
-          <CustomInput
-            placeHolder={"Email Id"}
-            selectionColor={"orange"}
-            iconName="at-outline"
-            setValue={setEmail}
-            secureTextEntry={false}
-            textContentType="emailAddress"
-          />
-          <CustomInput
+
+          <CustomInput {...customInputs} />
+
+          {/* {createCustomInput([
+            {
+              id: 1,
+              placeHolder: "Email Id",
+              selectionColor: "orange",
+              iconName: "at-outline",
+              setValue: setEmail,
+              secureTextEntry: false,
+              textContentType: "emailAddress",
+            },
+            {
+              id: 2,
+              placeHolder: "Password",
+              selectionColor: "orange",
+              iconName: "lock-closed-outline",
+              textContentType: "password",
+              setValue: setPassword,
+              secureTextEntry: true,
+            },
+          ])} */}
+
+          {/* <CustomInput
             placeHolder={"Password"}
             selectionColor={"orange"}
             iconName="lock-closed-outline"
             textContentType="password"
             setValue={setPassword}
             secureTextEntry={true}
-          />
+          /> */}
         </View>
+
+        {/* Forgot Password */}
         <TouchableOpacity
-          style={styles.forgotPasswordTextButton}
+          style={styles.forgotPasswordContainer}
           onPress={() => console.log(email, password)}
         >
           <Text style={styles.forgotPasswordText}>Forgot password?</Text>
         </TouchableOpacity>
 
+        {/* Login Button */}
         <RoundedButton text={"Login"} />
+
+        {/* Divider */}
+        <Divider text={"OR"} />
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
@@ -87,9 +132,9 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
     marginLeft: horizontalScale(5),
   },
-  forgotPasswordTextButton: {
+  forgotPasswordContainer: {
     alignSelf: "flex-end",
-    marginRight: horizontalScale(30),
+    marginRight: horizontalScale(60),
   },
   forgotPasswordText: {
     fontSize: moderateScale(15),
