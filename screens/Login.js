@@ -14,6 +14,8 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import CustomInput from "../components/input";
 import RoundedButton from "../components/RoundedButton";
 import Divider from "../components/Divider";
+import RoundedIconButton from "../components/RoundedIconButton";
+import { GoogleIcon } from "../assets";
 
 export default function Login() {
   const [email, setEmail] = useState();
@@ -55,39 +57,9 @@ export default function Login() {
         <View style={styles.middleSectionContainer}>
           {/* Header Text */}
           <Text style={styles.headerText}>Login</Text>
+
           {/* input details */}
-
           <CustomInput {...customInputs} />
-
-          {/* {createCustomInput([
-            {
-              id: 1,
-              placeHolder: "Email Id",
-              selectionColor: "orange",
-              iconName: "at-outline",
-              setValue: setEmail,
-              secureTextEntry: false,
-              textContentType: "emailAddress",
-            },
-            {
-              id: 2,
-              placeHolder: "Password",
-              selectionColor: "orange",
-              iconName: "lock-closed-outline",
-              textContentType: "password",
-              setValue: setPassword,
-              secureTextEntry: true,
-            },
-          ])} */}
-
-          {/* <CustomInput
-            placeHolder={"Password"}
-            selectionColor={"orange"}
-            iconName="lock-closed-outline"
-            textContentType="password"
-            setValue={setPassword}
-            secureTextEntry={true}
-          /> */}
         </View>
 
         {/* Forgot Password */}
@@ -103,6 +75,21 @@ export default function Login() {
 
         {/* Divider */}
         <Divider text={"OR"} />
+
+        {/* Google Button */}
+        <RoundedIconButton
+          text={"Login with Google"}
+          bgColor="#f1f5f6"
+          image={GoogleIcon}
+        />
+
+        {/* Bottom */}
+        <View style={styles.bottom}>
+          <Text>New to food recipes?</Text>
+          <TouchableOpacity onPress={() => alert("Register")}>
+            <Text style={styles.bottomRegisterText}> Register</Text>
+          </TouchableOpacity>
+        </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
@@ -111,10 +98,10 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
   },
   picture: {
-    height: moderateScale(200),
+    height: moderateScale(180),
     marginTop: verticalScale(50),
     justifyContent: "center",
     alignItems: "center",
@@ -143,5 +130,16 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     marginLeft: horizontalScale(30),
+  },
+  bottom: {
+    flexDirection: "row",
+    alignSelf: "center",
+    marginTop: verticalScale(30),
+    marginBottom: verticalScale(30),
+  },
+  bottomRegisterText: {
+    color: "#0065ff",
+    fontWeight: "bold",
+    fontSize: moderateScale(15),
   },
 });
