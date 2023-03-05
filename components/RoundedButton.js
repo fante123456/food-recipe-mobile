@@ -4,9 +4,9 @@ import { moderateScale, verticalScale } from "../Metrics";
 import Ripple from "react-native-material-ripple";
 
 const RoundedButton = (props) => {
-  const { text } = props;
+  const { text, buttonOnPress } = props;
   return (
-    <Ripple onPress={() => alert("Hello")} style={styles.container}>
+    <Ripple onPress={buttonOnPress} style={styles.container}>
       <Text style={styles.buttonText}>{text}</Text>
     </Ripple>
   );
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     height: moderateScale(50),
     width: moderateScale(300),
     borderRadius: 16,
-    alignSelf: "center",
+    alignSelf: "flex-start",
     alignItems: "center",
     justifyContent: "center",
     marginTop: verticalScale(20),

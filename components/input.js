@@ -4,15 +4,6 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const input = (props) => {
-  // const {
-  //   placeHolder,
-  //   selectionColor,
-  //   iconName,
-  //   setValue,
-  //   secureTextEntry,
-  //   textContentType,
-  // } = props;
-
   return Object.values(props).map((value) => {
     return (
       <View style={styles.inputContainer} key={value.id}>

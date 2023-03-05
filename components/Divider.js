@@ -18,8 +18,8 @@ export default Divider;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    marginHorizontal: horizontalScale(60),
-    marginTop:verticalScale(25)
+    marginHorizontal: horizontalScale(30),
+    marginTop: verticalScale(25),
   },
   leftSection: {
     backgroundColor: "#7b8ca6",
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: horizontalScale(10),
     fontSize: 16,
-    color:"#7b8ca6"
+    color: "#7b8ca6",
   },
   rightSection: {
     backgroundColor: "#7b8ca6",

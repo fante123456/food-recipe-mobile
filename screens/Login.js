@@ -16,10 +16,14 @@ import RoundedButton from "../components/RoundedButton";
 import Divider from "../components/Divider";
 import RoundedIconButton from "../components/RoundedIconButton";
 import { GoogleIcon } from "../assets";
+import { useNavigation } from "@react-navigation/native";
+import ForgotPassword from "./ForgotPassword";
 
 export default function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+
+  const navigation = useNavigation();
 
   const customInputs = [
     {
@@ -60,35 +64,41 @@ export default function Login() {
 
           {/* input details */}
           <CustomInput {...customInputs} />
-        </View>
 
-        {/* Forgot Password */}
-        <TouchableOpacity
-          style={styles.forgotPasswordContainer}
-          onPress={() => console.log(email, password)}
-        >
-          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-        </TouchableOpacity>
-
-        {/* Login Button */}
-        <RoundedButton text={"Login"} />
-
-        {/* Divider */}
-        <Divider text={"OR"} />
-
-        {/* Google Button */}
-        <RoundedIconButton
-          text={"Login with Google"}
-          bgColor="#f1f5f6"
-          image={GoogleIcon}
-        />
-
-        {/* Bottom */}
-        <View style={styles.bottom}>
-          <Text>New to food recipes?</Text>
-          <TouchableOpacity onPress={() => alert("Register")}>
-            <Text style={styles.bottomRegisterText}> Register</Text>
+          {/* Forgot Password */}
+          <TouchableOpacity
+            style={styles.forgotPasswordContainer}
+            onPress={() => navigation.navigate(ForgotPassword)}
+          >
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
+
+          {/* Login Button */}
+          <RoundedButton text="Login" />
+
+          {/* Divider */}
+          <View
+            style={{
+              marginRight: 50,
+            }}
+          >
+            <Divider text="OR" />
+          </View>
+
+          {/* Google Button */}
+          <RoundedIconButton
+            text="Login with Google"
+            bgColor="#f1f5f6"
+            image={GoogleIcon}
+          />
+
+          {/* Bottom */}
+          <View style={styles.bottom}>
+            <Text style={styles.bottomNormalText}>New to food recipes?</Text>
+            <TouchableOpacity onPress={() => alert("Register")}>
+              <Text style={styles.bottomRegisterText}> Register</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -99,6 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+    padding: horizontalScale(10),
   },
   picture: {
     height: moderateScale(180),
@@ -136,6 +147,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: verticalScale(30),
     marginBottom: verticalScale(30),
+    justifyContent: "center",
+  },
+  bottomNormalText: {
+    fontSize: moderateScale(15),
+    color: "grey",
   },
   bottomRegisterText: {
     color: "#0065ff",
