@@ -27,14 +27,7 @@ const ForgotPassword = () => {
     },
   ];
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        marginTop: useHeaderHeight(),
-        backgroundColor: "#fff",
-        paddingHorizontal: horizontalScale(10),
-      }}
-    >
+    <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -50,7 +43,7 @@ const ForgotPassword = () => {
             <Text style={styles.titleText}>Forgot Password?</Text>
           </View>
           {/* Info Text */}
-          <View>
+          <View style={styles.infoContainer}>
             <Text style={styles.infoText}>
               Please type yor email and you will be able to reset your password.
             </Text>
@@ -69,6 +62,12 @@ const ForgotPassword = () => {
 export default ForgotPassword;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: horizontalScale(10),
+    marginTop: horizontalScale(15),
+  },
   text: {
     fontSize: 25,
     fontWeight: "500",
@@ -80,11 +79,15 @@ const styles = StyleSheet.create({
   },
   header: {
     width: moderateScale(200),
+    marginTop: horizontalScale(-40),
   },
   titleText: TEXTS.titleText,
   middleSectionContainer: BODY.middleSection,
+  infoContainer: {
+    marginBottom: verticalScale(50),
+  },
   infoText: {
-    color: "grey",
-    marginBottom: verticalScale(20),
+    color: "#5A6780",
+    lineHeight: 20,
   },
 });

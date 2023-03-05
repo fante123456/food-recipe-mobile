@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
     marginLeft: horizontalScale(10),
     padding: moderateScale(7),
     paddingLeft: 0,
-    width: moderateScale(250),
+    // width: moderateScale(250),
+    flex: 1,
     fontSize: moderateScale(15),
   },
 });

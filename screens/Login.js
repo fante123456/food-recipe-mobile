@@ -77,13 +77,8 @@ export default function Login() {
           <RoundedButton text="Login" />
 
           {/* Divider */}
-          <View
-            style={{
-              marginRight: 50,
-            }}
-          >
-            <Divider text="OR" />
-          </View>
+
+          <Divider text="OR" />
 
           {/* Google Button */}
           <RoundedIconButton
@@ -119,7 +114,7 @@ const styles = StyleSheet.create({
   },
 
   middleSectionContainer: {
-    marginLeft: horizontalScale(30),
+    margin: horizontalScale(30),
   },
 
   headerText: {
@@ -132,26 +127,23 @@ const styles = StyleSheet.create({
   },
   forgotPasswordContainer: {
     alignSelf: "flex-end",
-    marginRight: horizontalScale(60),
+    // marginRight: horizontalScale(60),
   },
   forgotPasswordText: {
     fontSize: moderateScale(15),
     fontWeight: "bold",
     color: "#0c60d0",
   },
-  buttonsContainer: {
-    marginLeft: horizontalScale(30),
-  },
+
   bottom: {
     flexDirection: "row",
     alignSelf: "center",
-    marginTop: verticalScale(30),
-    marginBottom: verticalScale(30),
     justifyContent: "center",
+    marginTop: verticalScale(30),
   },
   bottomNormalText: {
     fontSize: moderateScale(15),
-    color: "grey",
+    color: "#9AA3B2",
   },
   bottomRegisterText: {
     color: "#0065ff",

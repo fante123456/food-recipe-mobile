@@ -27,7 +27,7 @@ export const TEXTS = {
 
 export const BODY = {
   middleSection: {
-    marginLeft: horizontalScale(30),
+    margin: horizontalScale(30),
   },
 };
 

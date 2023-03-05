@@ -16,9 +16,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#0065ff",
     height: moderateScale(50),
-    width: moderateScale(300),
+    // width: moderateScale(300),
+    flex: 1,
     borderRadius: 16,
-    alignSelf: "flex-start",
     alignItems: "center",
     justifyContent: "center",
     marginTop: verticalScale(20),
