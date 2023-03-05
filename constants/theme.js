@@ -23,11 +23,22 @@ export const TEXTS = {
     marginBottom: verticalScale(30),
     marginTop: verticalScale(10),
   },
+  infoText: {
+    color: "#5A6780",
+    lineHeight: 20,
+    fontSize: moderateScale(15),
+  },
 };
 
 export const BODY = {
   middleSection: {
     margin: horizontalScale(30),
+  },
+  picture: {
+    height: moderateScale(180),
+    marginTop: verticalScale(50),
+    justifyContent: "center",
+    alignItems: "center",
   },
 };
 

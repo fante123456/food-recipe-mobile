@@ -18,6 +18,7 @@ import RoundedIconButton from "../components/RoundedIconButton";
 import { GoogleIcon } from "../assets";
 import { useNavigation } from "@react-navigation/native";
 import ForgotPassword from "./ForgotPassword";
+import Signup from "./Register";
 
 export default function Login() {
   const [email, setEmail] = useState();
@@ -28,7 +29,7 @@ export default function Login() {
   const customInputs = [
     {
       id: 1,
-      placeHolder: "Email Id",
+      placeHolder: "Email",
       selectionColor: "orange",
       iconName: "at-outline",
       setValue: setEmail,
@@ -90,7 +91,7 @@ export default function Login() {
           {/* Bottom */}
           <View style={styles.bottom}>
             <Text style={styles.bottomNormalText}>New to food recipes?</Text>
-            <TouchableOpacity onPress={() => alert("Register")}>
+            <TouchableOpacity onPress={() => navigation.navigate(Signup)}>
               <Text style={styles.bottomRegisterText}> Register</Text>
             </TouchableOpacity>
           </View>
