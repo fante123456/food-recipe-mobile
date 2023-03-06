@@ -8,6 +8,9 @@ import { SignUpImage } from "../assets";
 import CustomInput from "../components/input";
 import RoundedButton from "../components/RoundedButton";
 import { useNavigation } from "@react-navigation/native";
+import { auth, db } from "../utils/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -43,8 +46,41 @@ const Signup = () => {
       textContentType: "password",
     },
   ];
-  const buttonOnPress = () => {
-    alert(`Email: ${email}\nNickname: ${nickname}\nPassword: ${password}`);
+
+  const handleSignUp = () => {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(async (userCredential) => {
+        const user = userCredential.user;
+        // Signed in
+        alert("basarili");
+        // console.log(user?.uid);
+        // sendEmailVerification(user).then(
+        //   alert("Email Verification has been sent")
+        // );
+
+        await setDoc(doc(db, "User", `${user.uid}`), {
+          about: `Hello! welcome to my page`,
+          email: email,
+          favorites: [],
+          followers: 0,
+          joinDate: user.metadata.creationTime,
+          name: "",
+          numberOfPosts: 0,
+          posts: [],
+          uid: user.uid,
+          following: [],
+          photoUrl:
+            "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultAvatar.png?alt=media&token=aac8b48a-2ce0-4313-8758-662598700004",
+          username: nickname,
+          bannerPhotoUrl:
+            "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultBanner.jpg?alt=media&token=b74c7775-bb92-4d90-b7b9-75aa1ae834b7",
+        });
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+      });
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -66,7 +102,7 @@ const Signup = () => {
           {/* Inputs */}
           <CustomInput {...customInputs} />
           {/* Button */}
-          <RoundedButton text="Signup" buttonOnPress={buttonOnPress} />
+          <RoundedButton text="Signup" buttonOnPress={handleSignUp} />
 
           <View style={styles.infoContainer}>
             <Text style={TEXTS.infoText}>Joined us before?</Text>
