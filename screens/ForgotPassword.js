@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -7,14 +7,33 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { TEXTS, BODY } from "../constants";
 import CustomInput from "../components/input";
-import RoundedButton from "../components/RoundedButton";
+import RoundedButton from "../components/Buttons/RoundedButton";
+import { ActivityIndicator } from "react-native";
+import { sendPasswordResetEmail } from "firebase/auth";
+import { auth } from "../utils/firebaseConfig";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const buttonOnPress = () => {
-    alert(email);
+  const handleForgotPassword = () => {
+    setLoading(true);
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        // Password reset email sent!
+        // ..
+        Alert.alert("success");
+        setLoading(false);
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setLoading(false);
+        alert(errorMessage);
+      });
   };
+
   const customInput = [
     {
       id: 1,
@@ -33,10 +52,10 @@ const ForgotPassword = () => {
         showsHorizontalScrollIndicator={false}
       >
         {/* Picture */}
-
         <View style={styles.picture}>
           <ForgotPasswordImage width={undefined} height={undefined} />
         </View>
+
         <View style={styles.middleSectionContainer}>
           {/* Header */}
           <View style={styles.header}>
@@ -51,8 +70,18 @@ const ForgotPassword = () => {
           {/* Input */}
           <CustomInput {...customInput} />
 
+          {!loading ? (
+            <RoundedButton text="Send" buttonOnPress={handleForgotPassword} />
+          ) : (
+            <ActivityIndicator
+              size={"large"}
+              color="#0065ff"
+              style={{
+                marginTop: verticalScale(20),
+              }}
+            />
+          )}
           {/* Button */}
-          <RoundedButton text="Send" buttonOnPress={buttonOnPress} />
         </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
@@ -66,7 +95,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: horizontalScale(10),
-    marginTop: verticalScale(15),
   },
   text: {
     fontSize: 25,

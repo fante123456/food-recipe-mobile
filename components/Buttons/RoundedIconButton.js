@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
+import { horizontalScale, moderateScale, verticalScale } from "../../Metrics";
 import Ripple from "react-native-material-ripple";
 
 const RoundedIconButton = (props) => {

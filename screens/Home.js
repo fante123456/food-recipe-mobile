@@ -4,7 +4,7 @@ import { auth } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BODY } from "../constants";
-import RoundedButton from "../components/RoundedButton";
+import RoundedButton from "../components/Buttons/RoundedButton";
 import { horizontalScale } from "../Metrics";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import AsyncStorage from "@react-native-async-storage/async-storage";

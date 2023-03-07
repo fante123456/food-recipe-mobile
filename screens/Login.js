@@ -14,9 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CookingPicture from "../assets/cooking.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomInput from "../components/input";
-import RoundedButton from "../components/RoundedButton";
+import RoundedButton from "../components/Buttons/RoundedButton";
 import Divider from "../components/Divider";
-import RoundedIconButton from "../components/RoundedIconButton";
+import RoundedIconButton from "../components/Buttons/RoundedIconButton";
 import { GoogleIcon } from "../assets";
 import { useNavigation } from "@react-navigation/native";
 import ForgotPassword from "./ForgotPassword";
@@ -54,7 +54,7 @@ export default function Login() {
 
   const handleLogin = () => {
     if (email !== "" && password !== "") {
-      signInWithEmailAndPassword(auth, "silinecek@gmail.com", "123456")
+      signInWithEmailAndPassword(auth, "keropiler1708@gmail.com", "1234567")
         .then(async () => {
           Alert.alert("succes");
         })

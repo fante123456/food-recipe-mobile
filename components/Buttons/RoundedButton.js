@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
 import React from "react";
-import { moderateScale, verticalScale } from "../Metrics";
+import { moderateScale, verticalScale } from "../../Metrics";
 import Ripple from "react-native-material-ripple";
 
 const RoundedButton = (props) => {

@@ -6,7 +6,7 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { BODY, TEXTS } from "../constants";
 import { SignUpImage } from "../assets";
 import CustomInput from "../components/input";
-import RoundedButton from "../components/RoundedButton";
+import RoundedButton from "../components/Buttons/RoundedButton";
 import { useNavigation } from "@react-navigation/native";
 import { auth, db } from "../utils/firebaseConfig";
 import { createUserWithEmailAndPassword } from "firebase/auth";
