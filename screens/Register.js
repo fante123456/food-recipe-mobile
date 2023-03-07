@@ -52,7 +52,7 @@ const Signup = () => {
       .then(async (userCredential) => {
         const user = userCredential.user;
         // Signed in
-        alert("basarili");
+
         // console.log(user?.uid);
         // sendEmailVerification(user).then(
         //   alert("Email Verification has been sent")
@@ -76,6 +76,7 @@ const Signup = () => {
             "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultBanner.jpg?alt=media&token=b74c7775-bb92-4d90-b7b9-75aa1ae834b7",
         });
       })
+      .then(() => alert("basarili"))
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;

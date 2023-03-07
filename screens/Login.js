@@ -1,5 +1,7 @@
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import {
+  ActivityIndicator,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,11 +21,14 @@ import { GoogleIcon } from "../assets";
 import { useNavigation } from "@react-navigation/native";
 import ForgotPassword from "./ForgotPassword";
 import Signup from "./Register";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../utils/firebaseConfig";
+import Home from "./Home";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-
   const navigation = useNavigation();
 
   const customInputs = [
@@ -46,6 +51,16 @@ export default function Login() {
       secureTextEntry: true,
     },
   ];
+
+  const handleLogin = () => {
+    if (email !== "" && password !== "") {
+      signInWithEmailAndPassword(auth, "silinecek@gmail.com", "123456")
+        .then(async () => {
+          Alert.alert("succes");
+        })
+        .catch((err) => Alert.alert("Login Error", err.message));
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,7 +90,7 @@ export default function Login() {
           </TouchableOpacity>
 
           {/* Login Button */}
-          <RoundedButton text="Login" />
+          <RoundedButton text="Login" buttonOnPress={handleLogin} />
 
           {/* Divider */}
 
