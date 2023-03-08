@@ -20,7 +20,7 @@ const Signup = () => {
   const customInputs = [
     {
       id: 1,
-      placeHolder: "Email",
+      placeholder: "Email",
       selectionColor: "orange",
       iconName: "at-outline",
       setValue: setEmail,
@@ -29,7 +29,7 @@ const Signup = () => {
     },
     {
       id: 2,
-      placeHolder: "Nickname",
+      placeholder: "Nickname",
       selectionColor: "orange",
       iconName: "person-outline",
       setValue: setUsername,
@@ -38,7 +38,7 @@ const Signup = () => {
     },
     {
       id: 3,
-      placeHolder: "Password",
+      placeholder: "Password",
       selectionColor: "orange",
       iconName: "at-outline",
       setValue: setPassword,
@@ -101,7 +101,9 @@ const Signup = () => {
             <Text style={TEXTS.titleText}>Signup</Text>
           </View>
           {/* Inputs */}
-          <CustomInput {...customInputs} />
+          {customInputs.map((inputVal) => {
+            return <CustomInput {...inputVal} key={inputVal.id} />;
+          })}
           {/* Button */}
           <RoundedButton text="Signup" buttonOnPress={handleSignUp} />
 
@@ -124,7 +126,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: horizontalScale(10),
-    marginTop: verticalScale(15),
   },
   infoContainer: {
     display: "flex",

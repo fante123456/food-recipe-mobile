@@ -25,41 +25,65 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../utils/firebaseConfig";
 import Home from "./Home";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Indicator from "../components/indicator";
 
 export default function Login() {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   const customInputs = [
     {
       id: 1,
-      placeHolder: "Email",
+      placeholder: "Email",
       selectionColor: "orange",
-      iconName: "at-outline",
       setValue: setEmail,
       secureTextEntry: false,
       textContentType: "emailAddress",
+      iconName: "at-outline",
     },
     {
       id: 2,
-      placeHolder: "Password",
+      placeholder: "Password",
       selectionColor: "orange",
-      iconName: "lock-closed-outline",
       textContentType: "password",
       setValue: setPassword,
       secureTextEntry: true,
+      iconName: "lock-closed-outline",
     },
   ];
 
   const handleLogin = () => {
     if (email !== "" && password !== "") {
+      setLoading(true);
       signInWithEmailAndPassword(auth, "keropiler1708@gmail.com", "1234567")
-        .then(async () => {
-          Alert.alert("succes");
-        })
-        .catch((err) => Alert.alert("Login Error", err.message));
+        .then(async () => {})
+        .catch((err) => {
+          switch (err.code) {
+            case "auth/user-not-found":
+              Alert.alert(
+                "Error",
+                "There is no existing user record corresponding to the provided identifier."
+              );
+              break;
+            case "auth/wrong-password":
+              Alert.alert("Error", "Username or password is incorrect");
+              break;
+
+            default:
+              Alert.alert(err.code);
+              break;
+          }
+          setLoading(false);
+        });
+    } else {
+      Alert.alert("Error", "Please fill the inputs.");
     }
+  };
+
+  const handleGoogleLogin = () => {
+    alert("saaa");
   };
 
   return (
@@ -79,7 +103,9 @@ export default function Login() {
           <Text style={styles.headerText}>Login</Text>
 
           {/* input details */}
-          <CustomInput {...customInputs} />
+          {customInputs.map((inputVal) => {
+            return <CustomInput {...inputVal} key={inputVal.id} />;
+          })}
 
           {/* Forgot Password */}
           <TouchableOpacity
@@ -90,18 +116,29 @@ export default function Login() {
           </TouchableOpacity>
 
           {/* Login Button */}
-          <RoundedButton text="Login" buttonOnPress={handleLogin} />
+          {!loading ? (
+            <RoundedButton text="Login" buttonOnPress={handleLogin} />
+          ) : (
+            <ActivityIndicator
+              size={"large"}
+              color="#0065ff"
+              style={{
+                marginTop: verticalScale(20),
+              }}
+            />
+          )}
 
           {/* Divider */}
 
           <Divider text="OR" />
 
           {/* Google Button */}
-          <RoundedIconButton
+          {/* <RoundedIconButton
             text="Login with Google"
             bgColor="#f1f5f6"
             image={GoogleIcon}
-          />
+            btnOnPress={handleGoogleLogin}
+          /> */}
 
           {/* Bottom */}
           <View style={styles.bottom}>

@@ -37,7 +37,7 @@ const ForgotPassword = () => {
   const customInput = [
     {
       id: 1,
-      placeHolder: "Email Id",
+      placeholder: "Email Id",
       selectionColor: "orange",
       iconName: "at-outline",
       setValue: setEmail,
@@ -68,7 +68,9 @@ const ForgotPassword = () => {
             </Text>
           </View>
           {/* Input */}
-          <CustomInput {...customInput} />
+          {customInput.map((inputVal) => {
+            return <CustomInput {...inputVal} key={inputVal.id} />;
+          })}
 
           {!loading ? (
             <RoundedButton text="Send" buttonOnPress={handleForgotPassword} />

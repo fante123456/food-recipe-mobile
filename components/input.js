@@ -4,27 +4,44 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 const input = (props) => {
-  return Object.values(props).map((value) => {
-    return (
-      <View style={styles.inputContainer} key={value.id}>
-        <Ionicons
-          name={value.iconName}
-          size={moderateScale(30)}
-          color={"#7b8ca6"}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder={value.placeHolder}
-          selectionColor={value.selectionColor}
-          secureTextEntry={value.secureTextEntry}
-          textContentType={value.textContentType}
-          onChangeText={(val) => {
-            value.setValue(val);
-          }}
-        />
-      </View>
-    );
-  });
+  const { ...inputProps } = props;
+  return (
+    <View style={styles.inputContainer}>
+      <Ionicons
+        name={inputProps.iconName}
+        size={moderateScale(30)}
+        color={"#7b8ca6"}
+      />
+      <TextInput
+        style={styles.input}
+        {...inputProps}
+        onChangeText={(val) => {
+          inputProps.setValue(val);
+        }}
+      />
+    </View>
+  );
+  // return Object.values(props).map((value) => {
+  //   return (
+  //     <View style={styles.inputContainer} key={value.id}>
+  //       <Ionicons
+  //         name={value.iconName}
+  //         size={moderateScale(30)}
+  //         color={"#7b8ca6"}
+  //       />
+  //       <TextInput
+  //         style={styles.input}
+  //         placeholder={value.placeHolder}
+  //         selectionColor={value.selectionColor}
+  //         secureTextEntry={value.secureTextEntry}
+  //         textContentType={value.textContentType}
+  //         onChangeText={(val) => {
+  //           value.setValue(val);
+  //         }}
+  //       />
+  //     </View>
+  //   );
+  // });
 
   // return (
   //   <View style={styles.inputContainer}>

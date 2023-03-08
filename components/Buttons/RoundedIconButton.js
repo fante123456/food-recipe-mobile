@@ -4,11 +4,11 @@ import { horizontalScale, moderateScale, verticalScale } from "../../Metrics";
 import Ripple from "react-native-material-ripple";
 
 const RoundedIconButton = (props) => {
-  const { text, image, bgColor } = props;
+  const { text, image, bgColor, btnOnPress } = props;
 
   return (
     <Ripple
-      onPress={() => alert("Hello")}
+      onPress={btnOnPress}
       style={{
         backgroundColor: bgColor,
         height: moderateScale(50),
