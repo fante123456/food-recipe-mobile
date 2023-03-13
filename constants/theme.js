@@ -3,6 +3,8 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 const { width, height } = Dimensions.get("window");
 
 export const COLORS = {
+  grey: "#5A6780",
+
   transparentBlack1: "rgba(2, 2, 2, 0.1)",
   transparentBlack3: "rgba(2, 2, 2, 0.3)",
   transparentBlack5: "rgba(2, 2, 2, 0.5)",

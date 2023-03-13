@@ -1,7 +1,9 @@
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import React from "react";
-import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
+import { horizontalScale, moderateScale, verticalScale } from "../../Metrics";
 import Ionicons from "@expo/vector-icons/Ionicons";
+
+///
 
 const input = (props) => {
   const { ...inputProps } = props;

@@ -6,7 +6,7 @@ import ForgotPasswordImage from "../assets/forgot-password.svg";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { TEXTS, BODY } from "../constants";
-import CustomInput from "../components/input";
+import CustomInput from "../components/Inputs/input";
 import RoundedButton from "../components/Buttons/RoundedButton";
 import { ActivityIndicator } from "react-native";
 import { sendPasswordResetEmail } from "firebase/auth";

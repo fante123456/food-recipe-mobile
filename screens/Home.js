@@ -1,14 +1,16 @@
 import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { auth } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { BODY } from "../constants";
 import RoundedButton from "../components/Buttons/RoundedButton";
-import { horizontalScale } from "../Metrics";
+import { horizontalScale, moderateScale } from "../Metrics";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import SearchBar from "../components/Inputs/SearchBar";
+import Avatar from "../components/Avatar";
 const Home = () => {
+  const [search, setSearch] = useState("");
   const navigation = useNavigation();
   const handleSignOut = () => {
     // auth.signOut().then(() => navigation.navigate(Login));
@@ -20,16 +22,31 @@ const Home = () => {
       .catch((err) => console.log(err));
   };
 
+  const deneme = () => {
+    console.log(search);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAwareScrollView
+      <View style={styles.body}>
+        <View style={styles.top}>
+          <SearchBar setVal={setSearch} />
+          <Avatar />
+        </View>
+
+        <View style={{ marginTop: 50 }}>
+          <Button title="1ss" onPress={deneme} />
+        </View>
+      </View>
+
+      {/* <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.middleSectionContainer}>
           <RoundedButton text="Signout" buttonOnPress={handleSignOut} />
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView> */}
     </SafeAreaView>
   );
 };
@@ -42,7 +59,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: horizontalScale(10),
   },
-  middleSectionContainer: {
-    margin: horizontalScale(30),
+  top: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: moderateScale(10),
   },
+  body: {},
 });

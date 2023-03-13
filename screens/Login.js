@@ -13,7 +13,7 @@ import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CookingPicture from "../assets/cooking.svg";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import CustomInput from "../components/input";
+import CustomInput from "../components/Inputs/input";
 import RoundedButton from "../components/Buttons/RoundedButton";
 import Divider from "../components/Divider";
 import RoundedIconButton from "../components/Buttons/RoundedIconButton";
@@ -57,7 +57,7 @@ export default function Login() {
   const handleLogin = () => {
     if (email !== "" && password !== "") {
       setLoading(true);
-      signInWithEmailAndPassword(auth, "keropiler1708@gmail.com", "1234567")
+      signInWithEmailAndPassword(auth, email, password)
         .then(async () => {})
         .catch((err) => {
           switch (err.code) {
