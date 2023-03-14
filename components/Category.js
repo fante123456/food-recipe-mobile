@@ -75,6 +75,8 @@ const Category = () => {
       <Text style={TEXTS.titleText2}>Category</Text>
       <View style={styles.categoryInfo}></View>
       <FlatList
+        showsHorizontalScrollIndicator={false}
+        scrool
         horizontal={true}
         data={DATA}
         renderItem={({ item }) => (

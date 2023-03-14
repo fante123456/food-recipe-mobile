@@ -60,13 +60,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: horizontalScale(10),
   },
   top: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-around",
     gap: moderateScale(10),
+    marginRight: moderateScale(15),
+    marginTop: moderateScale(20),
+    marginLeft: moderateScale(20),
   },
-  body: {},
+  body: {
+    flex: 1,
+  },
 });

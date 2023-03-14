@@ -31,6 +31,7 @@ export const TEXTS = {
     color: "#172b4d",
     marginBottom: verticalScale(10),
     marginTop: verticalScale(5),
+    marginLeft: moderateScale(20),
   },
   infoText: {
     color: "#5A6780",
