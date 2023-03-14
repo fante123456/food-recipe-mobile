@@ -25,6 +25,13 @@ export const TEXTS = {
     marginBottom: verticalScale(30),
     marginTop: verticalScale(10),
   },
+  titleText2: {
+    fontSize: moderateScale(20),
+    fontWeight: "bold",
+    color: "#172b4d",
+    marginBottom: verticalScale(10),
+    marginTop: verticalScale(5),
+  },
   infoText: {
     color: "#5A6780",
     lineHeight: 20,
