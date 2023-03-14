@@ -46,25 +46,10 @@ const Category = () => {
 
   const Item = ({ title, iconName }) => (
     <View style={{ padding: moderateScale(5) }}>
-      <Pressable
-        onPress={() => {
-          console.log(title);
-        }}
-      >
-        {/* <Text>{title}</Text> */}
-        <View
-          style={{
-            backgroundColor: "#172b4d",
-            justifyContent: "center",
-            alignItems: "center",
-            width: moderateScale(90),
-            height: moderateScale(90),
-            borderRadius: moderateScale(50),
-            gap: 5,
-          }}
-        >
-          <MaterialCommunityIcons name={iconName} size={25} color="orange" />
-          <Text style={{ color: "white", fontWeight: "bold" }}>{title}</Text>
+      <Pressable onPress={() => console.log(title)}>
+        <View style={styles.categoryStyle}>
+          <MaterialCommunityIcons name={iconName} size={28} color="orange" />
+          <Text style={styles.categoryText}>{title}</Text>
         </View>
       </Pressable>
     </View>
@@ -73,7 +58,6 @@ const Category = () => {
   return (
     <View style={styles.container}>
       <Text style={TEXTS.titleText2}>Category</Text>
-      <View style={styles.categoryInfo}></View>
       <FlatList
         showsHorizontalScrollIndicator={false}
         scrool
@@ -94,10 +78,18 @@ const styles = StyleSheet.create({
   container: {
     marginTop: verticalScale(15),
   },
-  categoryInfo: {},
-  categoryImages: {
-    width: moderateScale(50),
-    height: moderateScale(50),
-    borderRadius: 100,
+  categoryStyle: {
+    backgroundColor: "#172b4d",
+    justifyContent: "center",
+    alignItems: "center",
+    width: moderateScale(85),
+    height: moderateScale(85),
+    borderRadius: moderateScale(45),
+    gap: 2,
+    marginLeft: moderateScale(5),
+  },
+  categoryText: {
+    color: "white",
+    fontWeight: "bold",
   },
 });
