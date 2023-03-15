@@ -66,7 +66,7 @@ const Category = () => {
         renderItem={({ item }) => (
           <Item title={item.title} iconName={item.iconName} />
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.documentId}
       />
     </View>
   );

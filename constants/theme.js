@@ -30,8 +30,16 @@ export const TEXTS = {
     fontWeight: "bold",
     color: "#172b4d",
     marginBottom: verticalScale(10),
+
     marginTop: verticalScale(5),
     marginLeft: moderateScale(20),
+  },
+  titleText3: {
+    fontSize: moderateScale(15),
+    fontWeight: "bold",
+    color: "#172b4d",
+    marginTop: verticalScale(5),
+    width: moderateScale(210),
   },
   infoText: {
     color: "#5A6780",

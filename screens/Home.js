@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import SearchBar from "../components/Inputs/SearchBar";
 import Avatar from "../components/Avatar";
 import Category from "../components/Category";
+import Card from "../components/Card";
 const Home = () => {
   const [search, setSearch] = useState("");
   const navigation = useNavigation();
@@ -36,6 +37,7 @@ const Home = () => {
         </View>
 
         <Category />
+        <Card />
 
         {/* <View style={{ marginTop: 50, width: "50%", alignSelf: "center" }}>
           <Button title="1ss" onPress={deneme} />

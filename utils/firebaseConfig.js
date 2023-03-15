@@ -37,3 +37,29 @@ export const auth = initializeAuth(app, {
 
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+
+export const getCollectionByFieldInArray = async (
+  collectionName,
+  field,
+  searchedField,
+  isOrder
+) => {
+  //orderby baska seyleri bozabilir silebilirim.
+  let data = [];
+  const userRef = collection(db, `${collectionName}`);
+  let q;
+  if (isOrder === true) {
+    q = query(
+      userRef,
+      where(`${field}`, "==", `${searchedField}`),
+      orderBy("timestamp", "desc")
+    );
+  } else {
+    q = query(userRef, where(`${field}`, "==", `${searchedField}`));
+  }
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    data.push(doc.data());
+  });
+  return data;
+};
