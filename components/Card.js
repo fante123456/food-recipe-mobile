@@ -13,6 +13,7 @@ import { ExFood } from "../assets";
 import { FlatList } from "react-native-gesture-handler";
 import { async } from "@firebase/util";
 import { getCollectionByFieldInArray } from "../utils/firebaseConfig";
+import { Octicons } from "@expo/vector-icons";
 
 const Card = () => {
   const DATA = [
@@ -47,6 +48,7 @@ const Card = () => {
   ];
   const [snap, setSnap] = useState([]);
   useEffect(() => {
+    console.log("use effect");
     // getVeggie();
   }, []);
 
@@ -59,30 +61,47 @@ const Card = () => {
     );
   };
 
-  const Item = ({ image, title, addedBy, itemSnap }) => (
-    <View style={{ padding: moderateScale(5) }}>
-      <Pressable onPress={() => console.log(itemSnap)}>
-        <View style={styles.categoryStyle}>
-          <Image
-            source={{ uri: image }}
-            style={{
-              alignSelf: "center",
-              height: "100%",
-              width: "100%",
-              // resizeMode: "contain",
-              borderRadius: 20,
-            }}
-          />
-        </View>
-      </Pressable>
+  const Item = ({ image, title, addedBy, itemSnap, rating }) => {
+    let ratingOfTheItem = 0;
+    if (rating) {
+      rating.map((e) => {
+        ratingOfTheItem += e.number;
+      });
+      ratingOfTheItem /= itemSnap.rating.length;
+    }
+    return (
+      <View style={{ padding: moderateScale(5) }}>
+        <Pressable onPress={() => console.log(itemSnap.documentId)}>
+          <View style={styles.categoryStyle}>
+            <Image
+              source={{ uri: image }}
+              style={{
+                alignSelf: "center",
+                height: "100%",
+                width: "100%",
+                // resizeMode: "contain",
+                borderRadius: 20,
+              }}
+            />
+          </View>
+          <View style={styles.ratingContainer}>
+            <Octicons name="star-fill" size={20} color="#FCC806" />
+            <Text style={{ fontWeight: "bold" }}>
+              {new Intl.NumberFormat("en-IN", {
+                maximumFractionDigits: 2,
+              }).format(ratingOfTheItem)}
+            </Text>
+          </View>
+        </Pressable>
 
-      <View style={{ marginLeft: moderateScale(20) }}>
-        <Text style={TEXTS.titleText3}>{title}</Text>
-        {/* {addedBy ? <Text>{addedBy}</Text> : undefined} */}
-        {/* <Text>avatar and name {addedBy}</Text> */}
+        <View style={{ marginLeft: moderateScale(20) }}>
+          <Text style={TEXTS.titleText3}>{title}</Text>
+          {/* {addedBy ? <Text>{addedBy}</Text> : undefined} */}
+          {/* <Text>avatar and name {addedBy}</Text> */}
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -103,6 +122,7 @@ const Card = () => {
             title={item.title}
             addedBy={item.addedBy}
             itemSnap={item}
+            rating={item.rating}
           />
         )}
         keyExtractor={(item) => item.id}
@@ -134,5 +154,19 @@ const styles = StyleSheet.create({
   categoryText: {
     color: "white",
     fontWeight: "bold",
+  },
+
+  ratingContainer: {
+    position: "absolute",
+    right: 0,
+    padding: moderateScale(5),
+    width: moderateScale(55),
+    marginRight: horizontalScale(10),
+    marginTop: horizontalScale(10),
+    borderRadius: 30,
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
 });
