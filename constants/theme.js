@@ -39,7 +39,7 @@ export const TEXTS = {
     fontWeight: "bold",
     color: "#172b4d",
     marginTop: verticalScale(5),
-    width: moderateScale(210),
+    width: moderateScale(200),
   },
   infoText: {
     color: "#5A6780",

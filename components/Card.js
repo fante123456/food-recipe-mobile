@@ -14,8 +14,13 @@ import { FlatList } from "react-native-gesture-handler";
 import { async } from "@firebase/util";
 import { getCollectionByFieldInArray } from "../utils/firebaseConfig";
 import { Octicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import SeeAll from "../screens/SeeAll";
 
-const Card = () => {
+const Card = (props) => {
+  const { categoryName, categoryTitle } = props;
+
+  const navigation = useNavigation();
   const DATA = [
     {
       id: "1",
@@ -49,12 +54,12 @@ const Card = () => {
   const [snap, setSnap] = useState([]);
   useEffect(() => {
     console.log("use effect");
-    // getVeggie();
+    if (snap.length < 1) getData();
   }, []);
 
-  const getVeggie = async () => {
+  const getData = async () => {
     console.log("veggie");
-    await getCollectionByFieldInArray("post", "category", "veggie").then(
+    await getCollectionByFieldInArray("post", "category", categoryName).then(
       (e) => {
         setSnap(e);
       }
@@ -88,7 +93,7 @@ const Card = () => {
             <Octicons name="star-fill" size={20} color="#FCC806" />
             <Text style={{ fontWeight: "bold" }}>
               {new Intl.NumberFormat("en-IN", {
-                maximumFractionDigits: 2,
+                maximumFractionDigits: 1,
               }).format(ratingOfTheItem)}
             </Text>
           </View>
@@ -106,27 +111,39 @@ const Card = () => {
   return (
     <View style={styles.container}>
       <View style={styles.cardTitle}>
-        <Text style={TEXTS.titleText2}>Veggies</Text>
-        <TouchableOpacity onPress={() => console.log("see all")}>
+        <Text style={TEXTS.titleText2}>{categoryTitle}</Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.push("SeeAll", {
+              selectedSnap: snap,
+              title: categoryTitle,
+            });
+          }}
+        >
           <Text style={styles.cardTitle.rightText}>see all {">"}</Text>
         </TouchableOpacity>
       </View>
-      <FlatList
-        showsHorizontalScrollIndicator={false}
-        scrool
-        horizontal={true}
-        data={snap.slice(0, 4)} // 4 tane var see all ile hepsini goster !
-        renderItem={({ item }) => (
-          <Item
-            image={item.coverImagePath}
-            title={item.title}
-            addedBy={item.addedBy}
-            itemSnap={item}
-            rating={item.rating}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-      />
+
+      {snap.length > 0 ? (
+        <FlatList
+          showsHorizontalScrollIndicator={false}
+          scrool
+          horizontal={true}
+          data={snap.slice(0, 4)} // 4 tane var see all ile hepsini goster !
+          renderItem={({ item }) => {
+            return (
+              <Item
+                image={item.coverImagePath}
+                title={item.title}
+                addedBy={item.addedBy}
+                itemSnap={item}
+                rating={item.rating}
+              />
+            );
+          }}
+          keyExtractor={(item) => item.documentId}
+        />
+      ) : null}
     </View>
   );
 };

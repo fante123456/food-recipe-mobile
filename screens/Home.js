@@ -37,7 +37,7 @@ const Home = () => {
         </View>
 
         <Category />
-        <Card />
+        <Card categoryName="veggie" categoryTitle="Veggies"/>
 
         {/* <View style={{ marginTop: 50, width: "50%", alignSelf: "center" }}>
           <Button title="1ss" onPress={deneme} />
