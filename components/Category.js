@@ -12,7 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TEXTS } from "../constants";
 import { getCollectionByFieldInArray } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
-import HudView from "../screens/hudView";
+import HudView from "./HudView";
 
 const Category = (props) => {
   const { setLoading } = props;

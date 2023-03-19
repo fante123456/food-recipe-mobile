@@ -21,45 +21,16 @@ const Card = (props) => {
   const { field, docField, propTitle } = props;
 
   const navigation = useNavigation();
-  const DATA = [
-    {
-      id: "1",
-      image: ExFood,
-    },
-    {
-      id: "2",
-      image: ExFood,
-    },
-    {
-      id: "3",
-      image: ExFood,
-    },
-    {
-      id: "4",
-      image: ExFood,
-    },
-    {
-      id: "5",
-      image: ExFood,
-    },
-    {
-      id: "6",
-      image: ExFood,
-    },
-    {
-      id: "7",
-      image: ExFood,
-    },
-  ];
+
   const [snap, setSnap] = useState([]);
+
   useEffect(() => {
-    console.log("use effect");
     if (snap.length < 1) getData();
   }, []);
 
   const getData = async () => {
-    console.log("veggie");
     await getCollectionByFieldInArray("post", docField, field).then((e) => {
+      console.log("card view");
       setSnap(e);
     });
   };

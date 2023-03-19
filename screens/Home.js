@@ -16,7 +16,7 @@ import Avatar from "../components/Avatar";
 import Category from "../components/Category";
 import Card from "../components/Card";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import HudView from "../screens/hudView";
+import HudView from "../components/HudView";
 import { COLORS } from "../constants";
 
 const Home = () => {
@@ -36,25 +36,24 @@ const Home = () => {
       .catch((err) => console.log(err));
   };
 
+  const categoryCard = [
+    {
+      id: 1,
+      field: "veggie",
+      docField: "category",
+      propTitle: "Veggies",
+    },
+    {
+      id: 2,
+      field: "popular",
+      docField: "category",
+      propTitle: "Popular",
+    },
+  ];
   return (
     <SafeAreaView style={styles.container}>
-      {loading ? (
-        <View
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: 0,
-            bottom: 0,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: COLORS.transparentBlack1,
-            zIndex: 1500,
-          }}
-        >
-          <ActivityIndicator size="large" color="orange" />
-        </View>
-      ) : null}
+      {loading ? <HudView /> : null}
+
       <KeyboardAwareScrollView>
         <View style={styles.body}>
           <View style={styles.top}>
@@ -63,22 +62,17 @@ const Home = () => {
           </View>
           <Category setLoading={setLoading} />
 
-          <Card field="veggie" docField="category" propTitle="Veggies" />
-          <Card field="popular" docField="category" propTitle="Popular" />
+          {categoryCard.map((value) => (
+            <Card {...value} key={value.id} />
+          ))}
 
-          {/* <View style={{ marginTop: 50, width: "50%", alignSelf: "center" }}>
-          <Button title="1ss" onPress={deneme} />
-        </View> */}
+          {/* // <Card field="veggie" docField="category" propTitle="Veggies" />
+          // <Card field="popular" docField="category" propTitle="Popular" /> */}
         </View>
 
-        {/* <KeyboardAwareScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-      >
-        <View style={styles.middleSectionContainer}>
+        {/* <View style={styles.middleSectionContainer}>
           <RoundedButton text="Signout" buttonOnPress={handleSignOut} />
-        </View>
-      </KeyboardAwareScrollView> */}
+        </View> */}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
