@@ -18,7 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 import SeeAll from "../screens/SeeAll";
 
 const Card = (props) => {
-  const { categoryName, categoryTitle } = props;
+  const { field, docField, propTitle } = props;
 
   const navigation = useNavigation();
   const DATA = [
@@ -59,11 +59,9 @@ const Card = (props) => {
 
   const getData = async () => {
     console.log("veggie");
-    await getCollectionByFieldInArray("post", "category", categoryName).then(
-      (e) => {
-        setSnap(e);
-      }
-    );
+    await getCollectionByFieldInArray("post", docField, field).then((e) => {
+      setSnap(e);
+    });
   };
 
   const Item = ({ image, title, addedBy, itemSnap, rating }) => {
@@ -111,20 +109,37 @@ const Card = (props) => {
   return (
     <View style={styles.container}>
       <View style={styles.cardTitle}>
-        <Text style={TEXTS.titleText2}>{categoryTitle}</Text>
+        <Text style={TEXTS.titleText2}>{propTitle}</Text>
         <TouchableOpacity
           onPress={() => {
             navigation.push("SeeAll", {
               selectedSnap: snap,
-              title: categoryTitle,
+              title: propTitle,
             });
           }}
         >
           <Text style={styles.cardTitle.rightText}>see all {">"}</Text>
         </TouchableOpacity>
       </View>
-
-      {snap.length > 0 ? (
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        scrool
+        horizontal={true}
+        data={snap.slice(0, 4)} // 4 tane var see all ile hepsini goster !
+        renderItem={({ item }) => {
+          return (
+            <Item
+              image={item.coverImagePath}
+              title={item.title}
+              addedBy={item.addedBy}
+              itemSnap={item}
+              rating={item.rating}
+            />
+          );
+        }}
+        keyExtractor={(item) => item.documentId}
+      />
+      {/* {snap.length > 0 ? (
         <FlatList
           showsHorizontalScrollIndicator={false}
           scrool
@@ -143,7 +158,7 @@ const Card = (props) => {
           }}
           keyExtractor={(item) => item.documentId}
         />
-      ) : null}
+      ) : null} */}
     </View>
   );
 };

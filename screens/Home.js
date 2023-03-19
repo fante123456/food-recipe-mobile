@@ -1,18 +1,30 @@
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
-import { auth } from "../utils/firebaseConfig";
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import { auth, db } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { BODY } from "../constants";
-import RoundedButton from "../components/Buttons/RoundedButton";
 import { horizontalScale, moderateScale } from "../Metrics";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import SearchBar from "../components/Inputs/SearchBar";
 import Avatar from "../components/Avatar";
 import Category from "../components/Category";
 import Card from "../components/Card";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import HudView from "../screens/hudView";
+import { COLORS } from "../constants";
+
 const Home = () => {
   const [search, setSearch] = useState("");
+  const [snap, setSnap] = useState({});
+  const [veggies, setVeggies] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const navigation = useNavigation();
   const handleSignOut = () => {
     // auth.signOut().then(() => navigation.navigate(Login));
@@ -24,27 +36,42 @@ const Home = () => {
       .catch((err) => console.log(err));
   };
 
-  const deneme = () => {
-    console.log(search);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.body}>
-        <View style={styles.top}>
-          <SearchBar setVal={setSearch} />
-          <Avatar />
+      {loading ? (
+        <View
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: 0,
+            bottom: 0,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: COLORS.transparentBlack1,
+            zIndex: 1500,
+          }}
+        >
+          <ActivityIndicator size="large" color="orange" />
         </View>
+      ) : null}
+      <KeyboardAwareScrollView>
+        <View style={styles.body}>
+          <View style={styles.top}>
+            <SearchBar setVal={setSearch} />
+            <Avatar />
+          </View>
+          <Category setLoading={setLoading} />
 
-        <Category />
-        <Card categoryName="veggie" categoryTitle="Veggies"/>
+          <Card field="veggie" docField="category" propTitle="Veggies" />
+          <Card field="popular" docField="category" propTitle="Popular" />
 
-        {/* <View style={{ marginTop: 50, width: "50%", alignSelf: "center" }}>
+          {/* <View style={{ marginTop: 50, width: "50%", alignSelf: "center" }}>
           <Button title="1ss" onPress={deneme} />
         </View> */}
-      </View>
+        </View>
 
-      {/* <KeyboardAwareScrollView
+        {/* <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
@@ -52,6 +79,7 @@ const Home = () => {
           <RoundedButton text="Signout" buttonOnPress={handleSignOut} />
         </View>
       </KeyboardAwareScrollView> */}
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

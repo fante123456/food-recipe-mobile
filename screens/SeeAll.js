@@ -91,25 +91,27 @@ const SeeAll = ({ route, navigation }) => {
     );
   };
   return (
-    <FlatList
-      ItemSeparatorComponent={this.renderSeparatorView}
-      showsHorizontalScrollIndicator={false}
-      estimatedItemSize={175}
-      scrool
-      data={selectedSnap} // 4 tane var see all ile hepsini goster !
-      renderItem={({ item }) => {
-        return (
-          <Item
-            image={item.coverImagePath}
-            title={item.title}
-            addedBy={item.addedBy}
-            itemSnap={item}
-            rating={item.rating}
-          />
-        );
-      }}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <FlatList
+        ItemSeparatorComponent={this.renderSeparatorView}
+        showsHorizontalScrollIndicator={false}
+        estimatedItemSize={175}
+        scrool
+        data={selectedSnap} // 4 tane var see all ile hepsini goster !
+        renderItem={({ item }) => {
+          return (
+            <Item
+              image={item.coverImagePath}
+              title={item.title}
+              addedBy={item.addedBy}
+              itemSnap={item}
+              rating={item.rating}
+            />
+          );
+        }}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </View>
   );
 };
 

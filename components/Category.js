@@ -1,11 +1,22 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { useState } from "react";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { FlatList } from "react-native-gesture-handler";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TEXTS } from "../constants";
+import { getCollectionByFieldInArray } from "../utils/firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+import HudView from "../screens/hudView";
 
-const Category = () => {
+const Category = (props) => {
+  const { setLoading } = props;
+  const navigation = useNavigation();
   const DATA = [
     {
       id: "1",
@@ -44,9 +55,27 @@ const Category = () => {
     },
   ];
 
+  const getData = async (docField, field) => {
+    console.log("veggie");
+    return await getCollectionByFieldInArray("post", docField, field);
+  };
+
   const Item = ({ title, iconName }) => (
     <View style={{ padding: moderateScale(5) }}>
-      <Pressable onPress={() => console.log(title)}>
+      <Pressable
+        onPress={() => {
+          setLoading(true);
+          // field="veggie" docField="category" propTitle="Veggies"
+          getData("category", title).then((snap) => {
+            console.log(snap);
+            navigation.push("SeeAll", {
+              selectedSnap: snap,
+              title: title,
+            });
+            setLoading(false);
+          });
+        }}
+      >
         <View style={styles.categoryStyle}>
           <MaterialCommunityIcons name={iconName} size={28} color="orange" />
           <Text style={styles.categoryText}>{title}</Text>
