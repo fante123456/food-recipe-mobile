@@ -17,7 +17,7 @@ import Category from "../components/Category";
 import Card from "../components/Card";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import HudView from "../components/HudView";
-import { COLORS } from "../constants";
+import ProgressBar from "react-native-progress/Bar";
 
 const Home = () => {
   const [search, setSearch] = useState("");
@@ -37,18 +37,18 @@ const Home = () => {
   };
 
   const categoryCard = [
-    {
-      id: 1,
-      field: "veggie",
-      docField: "category",
-      propTitle: "Veggies",
-    },
-    {
-      id: 2,
-      field: "popular",
-      docField: "category",
-      propTitle: "Popular",
-    },
+    // {
+    //   id: 1,
+    //   field: "veggie",
+    //   docField: "category",
+    //   propTitle: "Veggies",
+    // },
+    // {
+    //   id: 2,
+    //   field: "popular",
+    //   docField: "category",
+    //   propTitle: "Popular",
+    // },
   ];
   return (
     <SafeAreaView style={styles.container}>

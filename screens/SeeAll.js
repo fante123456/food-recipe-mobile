@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect } from "react";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
@@ -23,7 +23,7 @@ const SeeAll = ({ route, navigation }) => {
       ratingOfTheItem /= itemSnap.rating.length;
     }
     return (
-      <TouchableOpacity
+      <Pressable
         activeOpacity={0.8}
         onPress={() => console.log(itemSnap.documentId)}
       >
@@ -75,7 +75,7 @@ const SeeAll = ({ route, navigation }) => {
             />
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
