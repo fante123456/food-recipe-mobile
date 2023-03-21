@@ -63,3 +63,40 @@ export const getCollectionByFieldInArray = async (
   });
   return data;
 };
+
+export const getCollectionSnapshot = async (collection, uid) => {
+  // const snapshot = (await getDoc(doc(db, `${collection}`, `${uid}`))).data();
+  // return snapshot;
+  return (await getDoc(doc(db, `${collection}`, `${uid}`))).data();
+};
+
+export const getCollectionByField = async (
+  collectionName,
+  field,
+  searchedField
+) => {
+  let data;
+  const userRef = collection(db, `${collectionName}`);
+  const q = query(userRef, where(`${field}`, "==", `${searchedField}`));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    data = doc.data();
+  });
+  return data;
+};
+
+export const getFavorites = async (favoritesArray, setSnap) => {
+  let data = [];
+  const postRef = collection(db, "post");
+
+  const q = query(postRef, where("documentId", "in", favoritesArray));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    // console.log(doc.id, " => ", doc.data());
+
+    data.push(doc.data());
+  });
+  return data;
+};

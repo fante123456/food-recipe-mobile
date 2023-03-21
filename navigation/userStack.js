@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, SeeAll } from "../screens";
+import { Favorites, FavoritesScreen, Home, SeeAll } from "../screens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -23,7 +23,10 @@ export default function UserStack() {
             iconName = focused ? "home" : "home-outline";
           } else if (route.name === "Test") {
             iconName = focused ? "ios-list" : "ios-list-outline";
+          } else if (route.name === "Favorites") {
+            iconName = focused ? "bookmark" : "bookmark-outline";
           }
+
           // else if (route.name === "Settings") {
           //   iconName = focused ? "ios-list" : "ios-list-outline";
           // }
@@ -37,6 +40,7 @@ export default function UserStack() {
     >
       <Tab.Screen name="Home" component={HomeStackScreen} />
       <Tab.Screen name="Test" component={TestStackScreen} />
+      <Tab.Screen name="Favorites" component={FavoritesStackScreen} />
     </Tab.Navigator>
   );
 }
@@ -65,5 +69,28 @@ function TestStackScreen() {
     <TestStack.Navigator screenOptions={{ headerShown: false }}>
       <TestStack.Screen name="TestPage" component={Test} />
     </TestStack.Navigator>
+  );
+}
+
+const FavoritesStack = createNativeStackNavigator();
+
+function FavoritesStackScreen() {
+  return (
+    <FavoritesStack.Navigator screenOptions={{ headerShown: false }}>
+      <FavoritesStack.Screen
+        name="My Recipe Book"
+        component={Favorites}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <FavoritesStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="SeeAll"
+        component={SeeAll}
+      />
+    </FavoritesStack.Navigator>
   );
 }
