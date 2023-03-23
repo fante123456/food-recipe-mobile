@@ -9,6 +9,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  onSnapshot,
   orderBy,
   query,
   setDoc,
@@ -86,6 +87,33 @@ export const getCollectionByField = async (
   return data;
 };
 
+export const realTimeGetCollectionByField = async (
+  collectionName,
+  field,
+  searchedField
+) => {
+  let data;
+  const userRef = collection(db, `${collectionName}`);
+  const q = query(userRef, where(`${field}`, "==", `${searchedField}`));
+  return q;
+
+  let x = undefined;
+
+  const unsubs = onSnapshot(q, (querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      x = doc.data();
+      // doc.data() is never undefined for query doc snapshots
+    });
+  });
+
+  // const querySnapshot = await getDocs(q);
+  // querySnapshot.forEach((doc) => {
+  //   // doc.data() is never undefined for query doc snapshots
+  //   data = doc.data();
+  // });
+  // return data;
+};
+
 export const getFavorites = async (favoritesArray, setSnap) => {
   let data = [];
   const postRef = collection(db, "post");
@@ -99,4 +127,13 @@ export const getFavorites = async (favoritesArray, setSnap) => {
     data.push(doc.data());
   });
   return data;
+};
+
+export const updateField = async (collection, uid, updatedField) => {
+  let status = false;
+  const document = doc(db, `${collection}`, `${uid}`);
+  await updateDoc(document, updatedField).then(() => {
+    status = true;
+  });
+  return status;
 };

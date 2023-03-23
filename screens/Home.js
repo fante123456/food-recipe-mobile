@@ -1,11 +1,4 @@
-import {
-  ActivityIndicator,
-  Alert,
-  Button,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { auth, db } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
@@ -17,7 +10,6 @@ import Category from "../components/Category";
 import Card from "../components/Card";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import HudView from "../components/HudView";
-import ProgressBar from "react-native-progress/Bar";
 
 const Home = () => {
   const [search, setSearch] = useState("");

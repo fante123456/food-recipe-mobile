@@ -41,6 +41,12 @@ export const TEXTS = {
     marginTop: verticalScale(5),
     width: moderateScale(200),
   },
+  favoriteCardTitle: {
+    fontSize: moderateScale(16),
+    fontWeight: "bold",
+    color: "#172b4d",
+    width: moderateScale(150),
+  },
   infoText: {
     color: "#5A6780",
     lineHeight: 20,
