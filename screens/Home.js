@@ -10,9 +10,10 @@ import Category from "../components/Category";
 import Card from "../components/Card";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import HudView from "../components/HudView";
+import { TextInput } from "react-native-gesture-handler";
 
 const Home = () => {
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [snap, setSnap] = useState({});
   const [veggies, setVeggies] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -49,7 +50,9 @@ const Home = () => {
       <KeyboardAwareScrollView>
         <View style={styles.body}>
           <View style={styles.top}>
-            <SearchBar setVal={setSearch} />
+            {/* <SearchBar setVal={setSearch} /> */}
+            <SearchBar setLoading={setLoading} />
+
             <Avatar />
           </View>
           <Category setLoading={setLoading} />

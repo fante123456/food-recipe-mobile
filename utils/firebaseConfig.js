@@ -137,3 +137,24 @@ export const updateField = async (collection, uid, updatedField) => {
   });
   return status;
 };
+
+export const searchRecipe = async (recipe) => {
+  console.log(recipe);
+  recipe = recipe[0].toUpperCase() + recipe.slice(1).toLowerCase();
+  let data = [];
+
+  try {
+    const docRef = collection(db, `post`);
+    const querySnapshot = await getDocs(
+      query(docRef, orderBy("timestamp", "desc"))
+    );
+    querySnapshot.forEach((doc) => {
+      if (doc.data().title.split(" ").includes(recipe)) {
+        data.push(doc.data());
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  return data;
+};

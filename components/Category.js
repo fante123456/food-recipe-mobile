@@ -56,7 +56,6 @@ const Category = (props) => {
   ];
 
   const getData = async (docField, field) => {
-    console.log("veggie");
     return await getCollectionByFieldInArray("post", docField, field);
   };
 
@@ -65,9 +64,8 @@ const Category = (props) => {
       <Pressable
         onPress={() => {
           setLoading(true);
-          // field="veggie" docField="category" propTitle="Veggies"
           getData("category", title).then((snap) => {
-            console.log(snap);
+            // console.log(snap);
             navigation.push("SeeAll", {
               selectedSnap: snap,
               title: title,

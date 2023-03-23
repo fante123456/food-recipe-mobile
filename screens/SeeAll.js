@@ -11,10 +11,6 @@ const SeeAll = ({ route, navigation }) => {
   }, [title]);
 
   const Item = ({ image, title, addedBy, itemSnap, rating }) => {
-    if (title.length > 25) {
-      title = title.slice(0, 30) + "...";
-    }
-
     let ratingOfTheItem = 0;
     if (rating) {
       rating.map((e) => {
@@ -56,16 +52,7 @@ const SeeAll = ({ route, navigation }) => {
                 alignItems: "flex-start",
               }}
             >
-              <Text
-                style={{
-                  fontSize: moderateScale(14),
-                  fontWeight: "bold",
-                  color: "#172b4d",
-                  textAlign: "center",
-                }}
-              >
-                {title}
-              </Text>
+              <Text style={styles.recipeTitle}>{title}</Text>
             </View>
             <FontAwesome
               name="angle-right"
@@ -80,37 +67,36 @@ const SeeAll = ({ route, navigation }) => {
   };
 
   renderSeparatorView = () => {
-    return (
-      <View
-        style={{
-          height: 1,
-          width: "100%",
-          backgroundColor: "#DEE2E5",
-        }}
-      />
-    );
+    return <View style={styles.separator} />;
   };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <FlatList
-        ItemSeparatorComponent={this.renderSeparatorView}
-        showsHorizontalScrollIndicator={false}
-        estimatedItemSize={175}
-        scrool
-        data={selectedSnap} // 4 tane var see all ile hepsini goster !
-        renderItem={({ item }) => {
-          return (
-            <Item
-              image={item.coverImagePath}
-              title={item.title}
-              addedBy={item.addedBy}
-              itemSnap={item}
-              rating={item.rating}
-            />
-          );
-        }}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      {selectedSnap.length > 0 ? (
+        <FlatList
+          ItemSeparatorComponent={this.renderSeparatorView}
+          showsHorizontalScrollIndicator={false}
+          estimatedItemSize={175}
+          scrool
+          data={selectedSnap} // 4 tane var see all ile hepsini goster !
+          renderItem={({ item }) => {
+            return (
+              <Item
+                image={item.coverImagePath}
+                title={item.title}
+                addedBy={item.addedBy}
+                itemSnap={item}
+                rating={item.rating}
+              />
+            );
+          }}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      ) : (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ textAlign: "center" }}>not found</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -164,4 +150,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
   },
+
+  recipeTitle: {
+    fontSize: moderateScale(14),
+    fontWeight: "bold",
+    color: "#172b4d",
+    textAlign: "left",
+  },
+
+  separator: { height: 1, width: "100%", backgroundColor: "#DEE2E5" },
 });
