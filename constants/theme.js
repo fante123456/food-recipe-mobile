@@ -38,7 +38,7 @@ export const TEXTS = {
     fontSize: moderateScale(15),
     fontWeight: "bold",
     color: "#172b4d",
-    marginTop: verticalScale(5),
+    // marginTop: verticalScale(5),
     width: moderateScale(200),
   },
   favoriteCardTitle: {

@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Test from "../screens/Test";
+import Recipe from "../screens/Recipe";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -67,7 +68,7 @@ const TestStack = createNativeStackNavigator();
 function TestStackScreen() {
   return (
     <TestStack.Navigator screenOptions={{ headerShown: false }}>
-      <TestStack.Screen name="TestPage" component={Test} />
+      <TestStack.Screen name="RecipePage" component={Recipe} />
     </TestStack.Navigator>
   );
 }

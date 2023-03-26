@@ -41,7 +41,7 @@ const SearchBar = (props) => {
       <Ionicons name="search-outline" size={moderateScale(22)} />
       <TextInput
         placeholder="Search your recipes"
-        // selectionColor={COLORS.transparentBlack5}
+        selectionColor={COLORS.transparentBlack5}
         style={styles.text}
         onChangeText={(val) => setSearch(val)}
         onSubmitEditing={() => _onSubmit()}
