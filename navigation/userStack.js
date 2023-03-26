@@ -99,6 +99,13 @@ function FavoritesStackScreen() {
         name="SeeAll"
         component={SeeAll}
       />
+      <FavoritesStack.Screen
+        name="RecipePage"
+        component={Recipe}
+        options={{
+          headerStyle: { backgroundColor: "#fff" },
+        }}
+      />
     </FavoritesStack.Navigator>
   );
 }

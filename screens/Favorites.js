@@ -21,7 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const Favorites = () => {
   const isFocused = useIsFocused();
-
+  const navigation = useNavigation();
   const user = useAuth();
   const [snap, setSnap] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -71,15 +71,29 @@ const Favorites = () => {
     );
   };
 
-  const Item = ({ image, title, itemSnap }) => {
+  const Item = ({ image, title, itemSnap, rating }) => {
     let addedBy = itemSnap.uid !== "admin" ? itemSnap.addedBy : "admin";
-
+    let ratingOfTheItem = 0;
+    if (rating) {
+      rating.map((e) => {
+        ratingOfTheItem += e.number;
+      });
+      ratingOfTheItem /= itemSnap.rating.length;
+    }
     return (
       <View style={styles.cardContainer}>
         <View style={styles.card}>
-          <View style={styles.imageContainer}>
+          <Pressable
+            style={styles.imageContainer}
+            onPress={() => {
+              navigation.push("RecipePage", {
+                snap: itemSnap,
+                rating: ratingOfTheItem,
+              });
+            }}
+          >
             <Image source={{ uri: image }} style={styles.image} />
-          </View>
+          </Pressable>
 
           <View style={styles.info}>
             <View style={styles.titleSection}>
@@ -130,6 +144,7 @@ const Favorites = () => {
                   image={item.coverImagePath}
                   title={item.title}
                   itemSnap={item}
+                  rating={item.rating}
                 />
               );
             }}
