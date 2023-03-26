@@ -21,7 +21,13 @@ const SeeAll = ({ route, navigation }) => {
     return (
       <Pressable
         activeOpacity={0.8}
-        onPress={() => console.log(itemSnap.documentId)}
+        onPress={() => {
+          navigation.push("RecipePage", {
+            snap: itemSnap,
+            rating:ratingOfTheItem
+          });
+          console.log(itemSnap.title);
+        }}
       >
         <View
           style={{

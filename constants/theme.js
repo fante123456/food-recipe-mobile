@@ -52,6 +52,9 @@ export const TEXTS = {
     lineHeight: 20,
     fontSize: moderateScale(15),
   },
+  recipeCardText: {
+    fontSize: moderateScale(16),
+  },
 };
 
 export const BODY = {

@@ -5,14 +5,19 @@ import {
   Pressable,
   LayoutAnimation,
   Animated,
+  useWindowDimensions,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { moderateScale, verticalScale } from "../Metrics";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { TEXTS } from "../constants";
+import { WebView } from "react-native-webview";
+import RenderHtml from "react-native-render-html";
 
 const ExpandableIconCard = (props) => {
-  const { icon, title, content } = props;
+  const { width } = useWindowDimensions();
+
+  const { icon, title, content, uid } = props;
   const [isExpanded, setIsExpanded] = useState(false);
   const [isRotated, setIsRotated] = useState(false);
 
@@ -44,7 +49,7 @@ const ExpandableIconCard = (props) => {
             <Text style={[TEXTS.titleText3]}>{title}</Text>
           </View>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <Ionicons name="chevron-forward-outline" size={24} />
+            <Ionicons name="chevron-forward-outline" size={24} color="tomato" />
           </Animated.View>
         </View>
 
@@ -58,18 +63,29 @@ const ExpandableIconCard = (props) => {
             />
             <View
               style={{
-                padding: moderateScale(15),
+                padding: moderateScale(10),
               }}
             >
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 14,
-                  marginBottom: 5,
-                }}
-              >
-                {content}
-              </Text>
+              {title !== "Ingredients" ? (
+                <Text style={{ fontSize: 16 }}>{content}</Text>
+              ) : (
+                content.map((ingredient, index) => {
+                  let ing = uid === "admin" ? ingredient.original : ingredient;
+                  return (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: "row",
+                        gap: verticalScale(20),
+                        padding: moderateScale(5),
+                      }}
+                    >
+                      <Ionicons name="ellipse-sharp" size={20} color="tomato" />
+                      <Text>{ing}</Text>
+                    </View>
+                  );
+                })
+              )}
             </View>
           </>
         ) : null}

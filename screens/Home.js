@@ -30,18 +30,18 @@ const Home = () => {
   };
 
   const categoryCard = [
-    // {
-    //   id: 1,
-    //   field: "veggie",
-    //   docField: "category",
-    //   propTitle: "Veggies",
-    // },
-    // {
-    //   id: 2,
-    //   field: "popular",
-    //   docField: "category",
-    //   propTitle: "Popular",
-    // },
+    {
+      id: 1,
+      field: "veggie",
+      docField: "category",
+      propTitle: "Veggies",
+    },
+    {
+      id: 2,
+      field: "popular",
+      docField: "category",
+      propTitle: "Popular",
+    },
   ];
   return (
     <SafeAreaView style={styles.container}>

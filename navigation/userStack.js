@@ -59,6 +59,13 @@ function HomeStackScreen() {
         name="SeeAll"
         component={SeeAll}
       />
+      <HomeStack.Screen
+        name="RecipePage"
+        component={Recipe}
+        options={{
+          headerStyle: { backgroundColor: "#fff" },
+        }}
+      />
     </HomeStack.Navigator>
   );
 }

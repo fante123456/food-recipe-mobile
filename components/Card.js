@@ -45,7 +45,15 @@ const Card = (props) => {
     }
     return (
       <View style={{ padding: moderateScale(5) }}>
-        <Pressable onPress={() => console.log(itemSnap.documentId)}>
+        <Pressable
+          onPress={() => {
+            console.log(itemSnap.documentId);
+            navigation.push("RecipePage", {
+              snap: itemSnap,
+              rating: ratingOfTheItem,
+            });
+          }}
+        >
           <View style={styles.categoryStyle}>
             <Image
               source={{ uri: image }}

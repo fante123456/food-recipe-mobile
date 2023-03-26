@@ -12,13 +12,21 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { ExFood } from "../assets";
 import { LinearGradient } from "expo-linear-gradient";
 import { TEXTS } from "../constants";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+  Octicons,
+} from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
 import { LayoutAnimation } from "react-native";
 import ExpandableIconCard from "../components/ExpandableIconCard";
+import { useNavigation } from "@react-navigation/native";
 
-const Recipe = () => {
+const Recipe = ({ route, navigation }) => {
+  const { snap, rating } = route.params;
+
   const _topLinear = () => {
     return (
       <View
@@ -48,11 +56,36 @@ const Recipe = () => {
           }}
         >
           <View>
-            <Text style={TEXTS.titleText3}>recipe title</Text>
+            <Text
+              style={{ ...TEXTS.titleText3, marginBottom: verticalScale(5) }}
+            >
+              {snap.title}
+            </Text>
             <View style={{ flexDirection: "row" }}>
-              <Text>avatar </Text>
-              <Text>username </Text>
-              <Text>recipe rating</Text>
+              {snap.uid !== "admin" ? (
+                <>
+                  <Text>avatar </Text>
+                  <Text>username </Text>
+                </>
+              ) : (
+                <Text>Admin</Text>
+              )}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 5,
+                  marginLeft: horizontalScale(15),
+                }}
+              >
+                <Octicons name="star-fill" size={15} color="#FCC806" />
+                <Text style={{}}>
+                  {new Intl.NumberFormat("en-IN", {
+                    maximumFractionDigits: 1,
+                  }).format(rating)}
+                </Text>
+              </View>
             </View>
           </View>
           <Ionicons name="bookmark-outline" size={24} color="grey" />
@@ -61,24 +94,61 @@ const Recipe = () => {
     );
   };
 
-  const content =
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-
   const expandableIconCard = [
+    {
+      icon: <Ionicons name="information-circle-outline" size={24} />,
+      title: "Brief",
+      content: snap.brief.replace(/(<([^>]+)>)/gi, ""),
+    },
     {
       icon: <Ionicons name="reader-outline" size={24} />,
       title: "Instructions",
-      content: content,
+      content: snap.instruction.replace(/(<([^>]+)>)/gi, ""),
     },
     {
       icon: <MaterialCommunityIcons name="bowl-mix-outline" size={24} />,
       title: "Ingredients",
-      content: content,
+      content: snap.ingredient,
+      uid: snap.uid,
     },
   ];
+
+  const _header = () => {
+    return (
+      <View
+        style={{
+          position: "absolute",
+          width: "100%",
+          zIndex: 11,
+          marginTop: verticalScale(15),
+          padding: moderateScale(10),
+          alignItems: "center",
+          flexDirection: "row",
+          gap: verticalScale(20),
+        }}
+      >
+        <Pressable onPress={() => navigation.goBack()}>
+          <AntDesign name="arrowleft" size={25} color="#fff" />
+        </Pressable>
+        <Text
+          style={{
+            color: "#fff",
+            fontSize: moderateScale(17),
+          }}
+        >
+          Recipe Details
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <ImageBackground style={styles.image} source={ExFood} />
+      {_header()}
+      <ImageBackground
+        style={styles.image}
+        source={{ uri: snap.coverImagePath }}
+      />
       {_topLinear()}
       <ScrollView
         showsVerticalScrollIndicator={false}
