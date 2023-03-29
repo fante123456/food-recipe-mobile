@@ -13,11 +13,11 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
+import { FlatList } from "react-native-gesture-handler";
 import { useIsFocused } from "@react-navigation/native";
-import { ExFood } from "../assets";
-import { COLORS, TEXTS } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
+import { setFav } from "../hooks/favs";
+import { TEXTS } from "../constants";
 
 const Favorites = () => {
   const isFocused = useIsFocused();
@@ -43,6 +43,7 @@ const Favorites = () => {
         getFavorites(doc.data().favorites).then((values) => {
           setSnap(values);
           setLoading(false);
+          setFav(values);
         });
       });
     });

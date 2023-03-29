@@ -6,12 +6,12 @@ import {
   Text,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { ExFood } from "../assets";
 import { LinearGradient } from "expo-linear-gradient";
-import { TEXTS } from "../constants";
+import { COLORS, TEXTS } from "../constants";
 import {
   AntDesign,
   Ionicons,
@@ -23,9 +23,52 @@ import { Pressable } from "react-native";
 import { LayoutAnimation } from "react-native";
 import ExpandableIconCard from "../components/ExpandableIconCard";
 import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "../hooks/useAuth";
+import { getFav, getStatus } from "../hooks/favs";
+import { getCollectionByField, updateField } from "../utils/firebaseConfig";
+import { arrayRemove, arrayUnion } from "firebase/firestore";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;
+  const [bookmark, setBookmarkColor] = useState(COLORS.inActiveBookmarkColor);
+  const user = useAuth();
+
+  useEffect(() => {
+    //yarım kaldi fbden cekilen kisim FAV EKLE CIKAR EKLE
+    if (getStatus() && user.user === undefined) {
+      let fav = getFav();
+      fav.map((value) => {
+        if (value.documentId === snap.documentId) {
+          setBookmarkColor(COLORS.activeBookmarkColor);
+        }
+      });
+    } else if (!getStatus() && user.user !== undefined) {
+      _getFavsFromDatabase();
+    }
+  }, [user.user]);
+
+  const _getFavsFromDatabase = () => {
+    console.log("pipi");
+    getCollectionByField("User", "uid", user.user.uid).then((favArray) => {
+      if (favArray.favorites.includes(snap.documentId)) {
+        setBookmarkColor(COLORS.activeBookmarkColor);
+      }
+    });
+  };
+
+  const _handleBookmarkButton = () => {
+    if (bookmark === COLORS.inActiveBookmarkColor) {
+      updateField("User", user.user.uid, {
+        favorites: arrayUnion(snap.documentId),
+      });
+      setBookmarkColor(COLORS.activeBookmarkColor);
+    } else {
+      updateField("User", user.user.uid, {
+        favorites: arrayRemove(snap.documentId),
+      });
+      setBookmarkColor(COLORS.inActiveBookmarkColor);
+    }
+  };
 
   const _topLinear = () => {
     return (
@@ -88,7 +131,13 @@ const Recipe = ({ route, navigation }) => {
               </View>
             </View>
           </View>
-          <Ionicons name="bookmark-outline" size={24} color="grey" />
+
+          <Ionicons
+            name="bookmark"
+            size={24}
+            color={bookmark}
+            onPress={_handleBookmarkButton}
+          />
         </View>
       </View>
     );
