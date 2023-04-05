@@ -48,7 +48,6 @@ const Recipe = ({ route, navigation }) => {
   }, [user.user]);
 
   const _getFavsFromDatabase = () => {
-    console.log("pipi");
     getCollectionByField("User", "uid", user.user.uid).then((favArray) => {
       if (favArray.favorites.includes(snap.documentId)) {
         setBookmarkColor(COLORS.activeBookmarkColor);

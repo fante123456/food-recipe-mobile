@@ -68,7 +68,7 @@ const Signup = () => {
             joinDate: user.metadata.creationTime,
             name: "",
             numberOfPosts: 0,
-            posts: [],
+            post: [],
             uid: user.uid,
             following: [],
             photoUrl:
