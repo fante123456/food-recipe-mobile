@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Test from "../screens/Test";
 import Recipe from "../screens/Recipe";
+import { Comments } from "../screens";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -15,6 +16,7 @@ const Tab = createBottomTabNavigator();
 export default function UserStack() {
   return (
     <Tab.Navigator
+      id="tabs"
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
@@ -66,6 +68,13 @@ function HomeStackScreen() {
           headerStyle: { backgroundColor: "#fff" },
         }}
       />
+      <HomeStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Comments"
+        component={Comments}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -74,8 +83,8 @@ const TestStack = createNativeStackNavigator();
 
 function TestStackScreen() {
   return (
-    <TestStack.Navigator screenOptions={{ headerShown: false }}>
-      <TestStack.Screen name="RecipePage" component={Recipe} />
+    <TestStack.Navigator screenOptions={{}}>
+      <TestStack.Screen name="Comments" component={Comments} />
     </TestStack.Navigator>
   );
 }
@@ -105,6 +114,13 @@ function FavoritesStackScreen() {
         options={{
           headerStyle: { backgroundColor: "#fff" },
         }}
+      />
+       <HomeStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Comments"
+        component={Comments}
       />
     </FavoritesStack.Navigator>
   );

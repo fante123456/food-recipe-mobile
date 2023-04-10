@@ -13,12 +13,12 @@ const Avatar = (props) => {
         onPress={() => {
           console.log("avatar pressed");
           // auth.signOut().then(() => navigation.navigate(Login));
-          auth
-            .signOut()
-            .then(async () => {
-              Alert.alert("succes");
-            })
-            .catch((err) => console.log(err));
+          // auth
+          //   .signOut()
+          //   .then(async () => {
+          //     Alert.alert("succes");
+          //   })
+          //   .catch((err) => console.log(err));
         }}
       >
         <Image source={{ uri: avatar }} style={styles.image} />

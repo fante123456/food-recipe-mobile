@@ -13,6 +13,7 @@ import HudView from "../components/HudView";
 import { TextInput } from "react-native-gesture-handler";
 import { useAuth } from "../hooks/useAuth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { setCurrentUserSnap } from "../hooks/getCurrentUserSnap";
 
 const Home = () => {
   const user = useAuth();
@@ -39,9 +40,10 @@ const Home = () => {
     if (user.user && Object.keys(userSnap).length === 0) {
       const userRef = collection(db, "User");
       const q = query(userRef, where("uid", "==", user.user.uid));
-      unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
           setUserSnap(doc.data());
+          setCurrentUserSnap(doc.data());
         });
       });
 
@@ -58,12 +60,12 @@ const Home = () => {
       docField: "category",
       propTitle: "Veggies",
     },
-    {
-      id: 2,
-      field: "popular",
-      docField: "category",
-      propTitle: "Popular",
-    },
+    // {
+    //   id: 2,
+    //   field: "popular",
+    //   docField: "category",
+    //   propTitle: "Popular",
+    // },
   ];
   return (
     <SafeAreaView style={styles.container}>

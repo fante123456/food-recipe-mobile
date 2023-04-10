@@ -27,6 +27,8 @@ import { useAuth } from "../hooks/useAuth";
 import { getFav, getStatus } from "../hooks/favs";
 import { getCollectionByField, updateField } from "../utils/firebaseConfig";
 import { arrayRemove, arrayUnion } from "firebase/firestore";
+import { hideBottomNavBar } from "../hooks/hideBottomNavBar";
+import { Button } from "react-native";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;
@@ -34,7 +36,6 @@ const Recipe = ({ route, navigation }) => {
   const user = useAuth();
 
   useEffect(() => {
-    //yarım kaldi fbden cekilen kisim FAV EKLE CIKAR EKLE
     if (getStatus() && user.user === undefined) {
       let fav = getFav();
       fav.map((value) => {
@@ -207,6 +208,14 @@ const Recipe = ({ route, navigation }) => {
           {expandableIconCard.map((details, index) => (
             <ExpandableIconCard {...details} key={index} />
           ))}
+          <Button
+            title="11"
+            onPress={() => {
+              navigation.push("Comments", {
+                postSnap: snap,
+              });
+            }}
+          />
         </View>
       </ScrollView>
     </View>

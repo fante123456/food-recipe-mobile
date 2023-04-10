@@ -4,3 +4,4 @@ export { default as Signup } from "./Register";
 export { default as Home } from "./Home";
 export { default as SeeAll } from "./SeeAll";
 export { default as Favorites } from "./Favorites";
+export { default as Comments } from "./Comments";

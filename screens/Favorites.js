@@ -164,6 +164,7 @@ export default Favorites;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
 
   cardContainer: {
@@ -174,14 +175,27 @@ const styles = StyleSheet.create({
     height: moderateScale(125),
     flexDirection: "row",
     backgroundColor: "#fff",
-    // borderRadius: 10,
+    borderRadius: 12,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
   },
+
   imageContainer: { height: "100%", width: "50%" },
   image: {
     resizeMode: "stretch",
     flex: 1,
     width: undefined,
     height: undefined,
+    borderTopLeftRadius: 12,
+    borderBottomLeftRadius: 12,
   },
   info: {
     padding: moderateScale(10),
