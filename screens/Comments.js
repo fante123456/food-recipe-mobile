@@ -1,5 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { FlatList, TextInput } from "react-native-gesture-handler";
@@ -10,18 +16,23 @@ import {
   Timestamp,
   addDoc,
   collection,
+  doc,
   getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../utils/firebaseConfig";
 import { COLORS, TEXTS } from "../constants";
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../hooks/useAuth";
 import { currentUserSnap } from "../hooks/getCurrentUserSnap";
+import { FlashList } from "@shopify/flash-list";
+import { updateField } from "../utils/firebaseConfig";
+import ReplyComment from "../components/Comment/ReplyComment";
 
 const Comments = ({ route, navigation }) => {
   hideBottomNavBar(navigation);
@@ -29,11 +40,14 @@ const Comments = ({ route, navigation }) => {
   const [commentSnapshot, setCommentSnapShot] = useState([]);
   const userSnap = currentUserSnap();
   const [load, setLoad] = useState(false);
+  const [isReplying, setReplying] = useState(false);
+  const [replyValues, setReplyValues] = useState({});
+  const [replyComments, setReplyComments] = useState({});
 
   useEffect(() => {
     if (commentSnapshot.length === 0) {
       _getData();
-      console.log(userSnap);
+      // console.log(userSnap);
     }
   }, []);
 
@@ -50,7 +64,13 @@ const Comments = ({ route, navigation }) => {
       querySnapshot.forEach((doc) => {
         // console.log(doc.id); // comment doc id
         // setCommentSnapShot((commentSnap) => [...commentSnap, doc.data()]);
-        comments.push(doc.data());
+
+        comments.push({ ...doc.data(), id: doc.id });
+
+        // for (let key in doc.data().reply) {
+        //   console.log(doc.data().reply[key].comment);
+        // }
+
         setLoad(true);
       });
       setCommentSnapShot(comments);
@@ -58,39 +78,60 @@ const Comments = ({ route, navigation }) => {
   };
 
   const _submitComment = async (comment) => {
-    const commentRef = collection(db, `post/${postSnap.documentId}/comment`);
-    await addDoc(commentRef, {
-      uid: userSnap.uid,
-      comment: comment,
-      time: serverTimestamp(),
-      username: userSnap.username,
-      photoUrl: userSnap.photoUrl,
-    });
+    if (Object.keys(replyValues).length !== 0) {
+      const ref = doc(
+        db,
+        "post",
+        `${postSnap.documentId}/comment/${replyValues.commentId}`
+      );
+      setDoc(
+        ref,
+        {
+          reply: {
+            [new Date().getTime()]: {
+              uid: userSnap.uid,
+              comment: comment,
+              time: serverTimestamp(),
+              username: userSnap.username,
+              photoUrl: userSnap.photoUrl,
+            },
+          },
+        },
+        { merge: true }
+      );
+    } else {
+      let path = `post/${postSnap.documentId}/comment`;
+      const commentRef = collection(db, path);
+      await addDoc(commentRef, {
+        uid: userSnap.uid,
+        comment: comment,
+        time: serverTimestamp(),
+        username: userSnap.username,
+        photoUrl: userSnap.photoUrl,
+      }).then((docRef) => {
+        updateField(path, docRef.id, {
+          documentId: docRef.id,
+        });
+      });
+    }
   };
 
   const defImage =
     "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultAvatar.png?alt=media&token=aac8b48a-2ce0-4313-8758-662598700004";
 
-  const Item = ({ username, comment, image, time }) => {
-    console.log(time, comment);
-    // let date;
-    // try {
-    //   date =
-    //     time.toDate().toDateString() +
-    //     " " +
-    //     time.toDate().toLocaleTimeString("tr-TR");
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    const dateK = time.toDate();
-    const formatter = new Intl.DateTimeFormat("tr", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-    const date = formatter.format(dateK);
+  const Item = ({ username, comment, image, time, commentId, itemSnap }) => {
+    let date;
+    try {
+      const dateK = time.toDate();
+      const formatter = new Intl.DateTimeFormat("tr", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      date = formatter.format(dateK);
+    } catch (error) {}
 
     return (
       <Pressable activeOpacity={0.8} onPress={() => {}}>
@@ -104,6 +145,7 @@ const Comments = ({ route, navigation }) => {
             <View
               style={{
                 height: 55,
+                alignSelf: "flex-start",
               }}
             >
               <Image
@@ -124,32 +166,62 @@ const Comments = ({ route, navigation }) => {
                 alignItems: "flex-start",
               }}
             >
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  width: "100%",
-                }}
-              >
-                <Text
-                  style={[
-                    TEXTS.titleText3,
-                    {
-                      width: "auto",
-                      lineHeight: moderateScale(20),
-                    },
-                  ]}
-                >
-                  {username.slice(0, 12)}
+              <View>
+                <Text style={TEXTS.titleText3}>{username.slice(0, 14)}</Text>
+                <Text style={{ fontSize: moderateScale(12.5), color: "grey" }}>
+                  {date}
                 </Text>
-                <Text>{date}</Text>
               </View>
 
-              <Text style={[TEXTS.infoText, { marginTop: verticalScale(15) }]}>
+              <Text
+                style={[
+                  TEXTS.infoText,
+                  { marginTop: verticalScale(10), color: "black" },
+                ]}
+              >
                 {comment}
               </Text>
               {/* <Text style={styles.recipeTitle}>{title}</Text> */}
+
+              <Pressable
+                style={{
+                  marginTop: verticalScale(15),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: moderateScale(5),
+                }}
+                onPress={() => {
+                  setReplyValues({ username: username, commentId: commentId });
+                  setReplying(true);
+
+                  inputRef.current.blur();
+                  setTimeout(() => {
+                    inputRef.current.focus();
+                  }, 100);
+                }}
+              >
+                <Ionicons name="chatbubble-outline" size={15} />
+                <Text style={{ color: "grey", fontWeight: "bold" }}>
+                  Answer
+                </Text>
+              </Pressable>
+
+              {itemSnap.reply
+                ? Object.keys(itemSnap.reply)
+                    .sort((a, b) => b - a)
+                    .map((key, index) => {
+                      console.log(key);
+                      return (
+                        <ReplyComment
+                          key={index}
+                          username={itemSnap.reply[key].username}
+                          comment={itemSnap.reply[key].comment}
+                          time={itemSnap.reply[key].time}
+                          photoUrl={itemSnap.reply[key].photoUrl}
+                        />
+                      );
+                    })
+                : null}
             </View>
           </View>
         </View>
@@ -161,9 +233,13 @@ const Comments = ({ route, navigation }) => {
     return <View style={styles.separator} />;
   };
 
+  const inputRef = React.useRef();
+  const [value, setValue] = useState("");
+
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      <FlatList
+      <FlashList
+        estimatedItemSize={137}
         ItemSeparatorComponent={this.renderSeparatorView}
         showsHorizontalScrollIndicator={false}
         scrool
@@ -175,6 +251,8 @@ const Comments = ({ route, navigation }) => {
               comment={item.comment}
               image={item.photoUrl}
               time={item.time}
+              commentId={item.id}
+              itemSnap={item}
             />
           );
         }}
@@ -183,31 +261,42 @@ const Comments = ({ route, navigation }) => {
 
       <View
         style={{
-          position: "absolute",
           backgroundColor: "#fff",
-          bottom: 0,
-          left: 0,
-          right: 0,
           borderWidth: 1,
           borderColor: COLORS.transparentBlack1,
         }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            padding: horizontalScale(10),
-            borderWidth: 2,
-            borderRadius: 30,
-            borderColor: COLORS.transparentBlack1,
-            margin: moderateScale(20),
-            justifyContent: "space-between",
-          }}
-        >
-          <CustomTextInput _submitComment={_submitComment} />
+        {isReplying ? (
+          <View>
+            <View style={styles.replyContainer}>
+              <Text>Replying to {replyValues.username.slice(0, 14)}</Text>
+              <Pressable
+                onPress={() => {
+                  Keyboard.dismiss();
+                  setReplying(false);
+                  setReplyValues([]);
+                }}
+              >
+                <Entypo name="cross" size={24} color="grey" />
+              </Pressable>
+            </View>
+          </View>
+        ) : null}
+
+        <View style={styles.commentInput}>
+          <View style={{ flex: 1 }}>
+            <CustomTextInput
+              _submitComment={_submitComment}
+              inputRef={inputRef}
+              value={value}
+              setValue={setValue}
+            />
+          </View>
+
           <Pressable
             onPress={() => {
-              _submitComment();
+              _submitComment(value);
+              Keyboard.dismiss();
             }}
           >
             <Ionicons name="send-outline" size={20} color={"tomato"} />
@@ -219,9 +308,7 @@ const Comments = ({ route, navigation }) => {
 };
 
 //Textinput separate component
-const CustomTextInput = ({ _submitComment }) => {
-  const [value, setValue] = useState("");
-
+const CustomTextInput = ({ _submitComment, inputRef, value, setValue }) => {
   return (
     <TextInput
       placeholder="Write your comment."
@@ -230,6 +317,7 @@ const CustomTextInput = ({ _submitComment }) => {
       onChangeText={(text) => setValue(text)}
       value={value}
       onSubmitEditing={(event) => _submitComment(event.nativeEvent.text)}
+      ref={inputRef}
     />
   );
 };
@@ -251,5 +339,23 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: moderateScale(8),
     color: COLORS.transparentBlack5,
+  },
+
+  commentInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: horizontalScale(10),
+    borderWidth: 2,
+    borderRadius: 30,
+    borderColor: COLORS.transparentBlack1,
+    margin: moderateScale(10),
+    justifyContent: "space-between",
+  },
+
+  replyContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: moderateScale(10),
   },
 });

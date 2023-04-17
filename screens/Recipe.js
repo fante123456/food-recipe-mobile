@@ -164,18 +164,7 @@ const Recipe = ({ route, navigation }) => {
 
   const _header = () => {
     return (
-      <View
-        style={{
-          position: "absolute",
-          width: "100%",
-          zIndex: 11,
-          marginTop: verticalScale(15),
-          padding: moderateScale(10),
-          alignItems: "center",
-          flexDirection: "row",
-          gap: verticalScale(20),
-        }}
-      >
+      <View style={styles.header}>
         <Pressable onPress={() => navigation.goBack()}>
           <AntDesign name="arrowleft" size={25} color="#fff" />
         </Pressable>
@@ -208,14 +197,24 @@ const Recipe = ({ route, navigation }) => {
           {expandableIconCard.map((details, index) => (
             <ExpandableIconCard {...details} key={index} />
           ))}
-          <Button
-            title="11"
+
+          <Pressable
+            style={styles.commnetBtnContainer}
             onPress={() => {
               navigation.push("Comments", {
                 postSnap: snap,
               });
             }}
-          />
+          >
+            <View
+              style={{
+                padding: moderateScale(12),
+                alignSelf: "center",
+              }}
+            >
+              <Text style={styles.commentBtnTitle}>See comments</Text>
+            </View>
+          </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -225,6 +224,16 @@ const Recipe = ({ route, navigation }) => {
 export default Recipe;
 
 const styles = StyleSheet.create({
+  header: {
+    position: "absolute",
+    width: "100%",
+    zIndex: 11,
+    marginTop: verticalScale(15),
+    padding: moderateScale(10),
+    alignItems: "center",
+    flexDirection: "row",
+    gap: verticalScale(20),
+  },
   scrollView: {
     flex: 1,
     position: "absolute",
@@ -260,5 +269,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.27,
     shadowRadius: 4.65,
     elevation: 6,
+  },
+
+  commnetBtnContainer: {
+    flex: 1,
+    borderRadius: moderateScale(15),
+    backgroundColor: "tomato",
+    height: "100%",
+    marginBottom: verticalScale(15),
+  },
+  commentBtnTitle: {
+    fontSize: moderateScale(15),
+    color: "#fff",
+    fontWeight: "bold",
   },
 });

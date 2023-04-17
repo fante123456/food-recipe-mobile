@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import React, { useRef, useState } from "react";
-import { moderateScale, verticalScale } from "../Metrics";
+import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { TEXTS } from "../constants";
 import { WebView } from "react-native-webview";
@@ -63,7 +63,9 @@ const ExpandableIconCard = (props) => {
             />
             <View
               style={{
-                padding: moderateScale(10),
+                paddingVertical: verticalScale(10),
+                alignSelf: "center",
+                width: "80%",
               }}
             >
               {title !== "Ingredients" ? (
