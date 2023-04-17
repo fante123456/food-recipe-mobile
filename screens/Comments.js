@@ -1,4 +1,4 @@
-import { Keyboard, StyleSheet, Text, View } from "react-native";
+import { Alert, Keyboard, StyleSheet, Text, View } from "react-native";
 import React, {
   useCallback,
   useEffect,
@@ -33,6 +33,7 @@ import { currentUserSnap } from "../hooks/getCurrentUserSnap";
 import { FlashList } from "@shopify/flash-list";
 import { updateField } from "../utils/firebaseConfig";
 import ReplyComment from "../components/Comment/ReplyComment";
+import CommentDeleteAlert from "../components/Buttons/Alert/CommentDeleteAlert";
 
 const Comments = ({ route, navigation }) => {
   hideBottomNavBar(navigation);
@@ -173,6 +174,22 @@ const Comments = ({ route, navigation }) => {
                 </Text>
               </View>
 
+              {currentUserSnap().uid === itemSnap.uid ? (
+                <Ionicons
+                  color={"tomato"}
+                  name="trash-outline"
+                  size={15}
+                  style={{
+                    position: "absolute",
+                    right: moderateScale(15),
+                    top: moderateScale(10),
+                  }}
+                  onPress={() =>
+                    CommentDeleteAlert(postSnap.documentId, commentId)
+                  }
+                />
+              ) : null}
+
               <Text
                 style={[
                   TEXTS.infoText,
@@ -183,28 +200,54 @@ const Comments = ({ route, navigation }) => {
               </Text>
               {/* <Text style={styles.recipeTitle}>{title}</Text> */}
 
-              <Pressable
-                style={{
-                  marginTop: verticalScale(15),
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: moderateScale(5),
-                }}
-                onPress={() => {
-                  setReplyValues({ username: username, commentId: commentId });
-                  setReplying(true);
+              <View style={{ flexDirection: "row" }}>
+                <Pressable
+                  style={{
+                    marginTop: verticalScale(15),
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: moderateScale(5),
+                  }}
+                  onPress={() => {
+                    setReplyValues({
+                      username: username,
+                      commentId: commentId,
+                    });
+                    setReplying(true);
 
-                  inputRef.current.blur();
-                  setTimeout(() => {
-                    inputRef.current.focus();
-                  }, 100);
-                }}
-              >
-                <Ionicons name="chatbubble-outline" size={15} />
-                <Text style={{ color: "grey", fontWeight: "bold" }}>
-                  Answer
-                </Text>
-              </Pressable>
+                    inputRef.current.blur();
+                    setTimeout(() => {
+                      inputRef.current.focus();
+                    }, 100);
+                  }}
+                >
+                  <Ionicons name="chatbubble-outline" size={15} />
+                  <Text style={{ color: "grey", fontWeight: "bold" }}>
+                    Answer
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  style={{
+                    marginTop: verticalScale(15),
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: moderateScale(5),
+                  }}
+                  onPress={() => {
+                    Alert.alert("Report", "Comment succesfully reported");
+                  }}
+                >
+                  <Ionicons
+                    name="flag-outline"
+                    size={15}
+                    style={{ marginLeft: horizontalScale(10) }}
+                  />
+                  <Text style={{ color: "grey", fontWeight: "bold" }}>
+                    Report
+                  </Text>
+                </Pressable>
+              </View>
 
               {itemSnap.reply
                 ? Object.keys(itemSnap.reply)
@@ -218,6 +261,10 @@ const Comments = ({ route, navigation }) => {
                           comment={itemSnap.reply[key].comment}
                           time={itemSnap.reply[key].time}
                           photoUrl={itemSnap.reply[key].photoUrl}
+                          uid={itemSnap.reply[key].uid}
+                          objectKey={key}
+                          documentId={postSnap.documentId}
+                          commentId={commentId}
                         />
                       );
                     })

@@ -4,6 +4,7 @@ const { width, height } = Dimensions.get("window");
 
 export const COLORS = {
   grey: "#5A6780",
+  grey2: "#F3F3F3",
   activeBookmarkColor: "#FFC702",
   inActiveBookmarkColor: "#D7D7D9",
 
@@ -15,7 +16,6 @@ export const COLORS = {
 
   transparentGray: "rgba(77,77,77, 0.8)",
   transparentDarkGray: "rgba(20,20,20, 0.9)",
-
   transparent: "transparent",
 };
 
