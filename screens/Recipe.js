@@ -28,7 +28,6 @@ import { getFav, getStatus } from "../hooks/favs";
 import { getCollectionByField, updateField } from "../utils/firebaseConfig";
 import { arrayRemove, arrayUnion } from "firebase/firestore";
 import { hideBottomNavBar } from "../hooks/hideBottomNavBar";
-import { Button } from "react-native";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;

@@ -34,16 +34,17 @@ import { FlashList } from "@shopify/flash-list";
 import { updateField } from "../utils/firebaseConfig";
 import ReplyComment from "../components/Comment/ReplyComment";
 import CommentDeleteAlert from "../components/Buttons/Alert/CommentDeleteAlert";
+import HudView from "../components/HudView";
+import UserAvatar from "../components/UserAvatar";
 
 const Comments = ({ route, navigation }) => {
   hideBottomNavBar(navigation);
   const { postSnap } = route.params;
   const [commentSnapshot, setCommentSnapShot] = useState([]);
   const userSnap = currentUserSnap();
-  const [load, setLoad] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [isReplying, setReplying] = useState(false);
   const [replyValues, setReplyValues] = useState({});
-  const [replyComments, setReplyComments] = useState({});
 
   useEffect(() => {
     if (commentSnapshot.length === 0) {
@@ -53,8 +54,6 @@ const Comments = ({ route, navigation }) => {
   }, []);
 
   const _getData = async () => {
-    // `post/${postSnap.documentId}/comment`
-
     const q = query(
       collection(db, `post/${postSnap.documentId}/comment`),
       orderBy("time", "desc")
@@ -71,10 +70,9 @@ const Comments = ({ route, navigation }) => {
         // for (let key in doc.data().reply) {
         //   console.log(doc.data().reply[key].comment);
         // }
-
-        setLoad(true);
       });
       setCommentSnapShot(comments);
+      setLoading(true);
     });
   };
 
@@ -117,9 +115,6 @@ const Comments = ({ route, navigation }) => {
     }
   };
 
-  const defImage =
-    "https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/Defaults%2FdefaultAvatar.png?alt=media&token=aac8b48a-2ce0-4313-8758-662598700004";
-
   const Item = ({ username, comment, image, time, commentId, itemSnap }) => {
     let date;
     try {
@@ -143,23 +138,12 @@ const Comments = ({ route, navigation }) => {
           }}
         >
           <View style={styles.categoryStyle}>
-            <View
-              style={{
-                height: 55,
-                alignSelf: "flex-start",
-              }}
-            >
-              <Image
-                resizeMode="stretch"
-                // source={{ uri: image }}
-                source={{ uri: image }}
-                style={{
-                  flex: 1,
-                  width: 55,
-                  borderRadius: 30,
-                }}
-              />
-            </View>
+            <UserAvatar
+              image={image}
+              width={55}
+              height={55}
+              position={"flex-start"}
+            />
 
             <View
               style={{
@@ -178,7 +162,7 @@ const Comments = ({ route, navigation }) => {
                 <Ionicons
                   color={"tomato"}
                   name="trash-outline"
-                  size={15}
+                  size={18}
                   style={{
                     position: "absolute",
                     right: moderateScale(15),
@@ -285,6 +269,7 @@ const Comments = ({ route, navigation }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      {!loading ? <HudView /> : null}
       <FlashList
         estimatedItemSize={137}
         ItemSeparatorComponent={this.renderSeparatorView}
@@ -330,24 +315,32 @@ const Comments = ({ route, navigation }) => {
           </View>
         ) : null}
 
-        <View style={styles.commentInput}>
-          <View style={{ flex: 1 }}>
-            <CustomTextInput
-              _submitComment={_submitComment}
-              inputRef={inputRef}
-              value={value}
-              setValue={setValue}
-            />
-          </View>
+        <View style={styles.replyInputContainer}>
+          <UserAvatar
+            image={userSnap.photoUrl}
+            width={45}
+            height={45}
+            position={"center"}
+          />
+          <View style={styles.commentInput}>
+            <View style={{}}>
+              <CustomTextInput
+                _submitComment={_submitComment}
+                inputRef={inputRef}
+                value={value}
+                setValue={setValue}
+              />
+            </View>
 
-          <Pressable
-            onPress={() => {
-              _submitComment(value);
-              Keyboard.dismiss();
-            }}
-          >
-            <Ionicons name="send-outline" size={20} color={"tomato"} />
-          </Pressable>
+            <Pressable
+              onPress={() => {
+                _submitComment(value);
+                Keyboard.dismiss();
+              }}
+            >
+              <Ionicons name="send-outline" size={20} color={"tomato"} />
+            </Pressable>
+          </View>
         </View>
       </View>
     </View>
@@ -385,18 +378,20 @@ const styles = StyleSheet.create({
   separator: { height: 1, width: "100%", backgroundColor: "#DEE2E5" },
   text: {
     marginLeft: moderateScale(8),
-    color: COLORS.transparentBlack5,
+    color: COLORS.textGrey,
+    fontWeight: "bold",
   },
 
   commentInput: {
     flexDirection: "row",
     alignItems: "center",
     padding: horizontalScale(10),
-    borderWidth: 2,
     borderRadius: 30,
     borderColor: COLORS.transparentBlack1,
     margin: moderateScale(10),
     justifyContent: "space-between",
+    backgroundColor: COLORS.grey2,
+    flex: 1,
   },
 
   replyContainer: {
@@ -404,5 +399,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: moderateScale(10),
+  },
+  replyInputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

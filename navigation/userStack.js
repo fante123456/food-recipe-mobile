@@ -115,7 +115,7 @@ function FavoritesStackScreen() {
           headerStyle: { backgroundColor: "#fff" },
         }}
       />
-       <HomeStack.Screen
+      <HomeStack.Screen
         options={{
           headerShown: true,
         }}

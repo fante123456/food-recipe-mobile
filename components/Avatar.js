@@ -6,6 +6,7 @@ import { TouchableOpacity } from "react-native";
 import { auth } from "../utils/firebaseConfig";
 
 const Avatar = (props) => {
+  //homepage
   const { avatar } = props;
   return (
     <View style={styles.container}>
