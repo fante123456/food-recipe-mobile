@@ -28,10 +28,14 @@ import { getFav, getStatus } from "../hooks/favs";
 import { getCollectionByField, updateField } from "../utils/firebaseConfig";
 import { arrayRemove, arrayUnion } from "firebase/firestore";
 import { hideBottomNavBar } from "../hooks/hideBottomNavBar";
+import { Snackbar } from "react-native-paper";
+import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;
   const [bookmark, setBookmarkColor] = useState(COLORS.inActiveBookmarkColor);
+  const [visible, setVisible] = useState(false);
+  const [snackbarAttr, setSnacbakAttr] = useState({});
   const user = useAuth();
 
   useEffect(() => {
@@ -56,12 +60,21 @@ const Recipe = ({ route, navigation }) => {
   };
 
   const _handleBookmarkButton = () => {
+    setVisible(true);
     if (bookmark === COLORS.inActiveBookmarkColor) {
+      setSnacbakAttr({
+        visible: true,
+        text: "Recipe added to your favorites",
+      });
       updateField("User", user.user.uid, {
         favorites: arrayUnion(snap.documentId),
       });
       setBookmarkColor(COLORS.activeBookmarkColor);
     } else {
+      setSnacbakAttr({
+        visible: true,
+        text: "Recipe removed from your favorites",
+      });
       updateField("User", user.user.uid, {
         favorites: arrayRemove(snap.documentId),
       });
@@ -85,6 +98,7 @@ const Recipe = ({ route, navigation }) => {
       </View>
     );
   };
+
   const recipeInfo = () => {
     return (
       <View style={styles.recipeCardContainer}>
@@ -182,6 +196,7 @@ const Recipe = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       {_header()}
+
       <ImageBackground
         style={styles.image}
         source={{ uri: snap.coverImagePath }}
@@ -215,6 +230,9 @@ const Recipe = ({ route, navigation }) => {
             </View>
           </Pressable>
         </View>
+        {visible ? (
+          <CustomSnackbar snackbarAttr={snackbarAttr} setter={setSnacbakAttr} />
+        ) : null}
       </ScrollView>
     </View>
   );
