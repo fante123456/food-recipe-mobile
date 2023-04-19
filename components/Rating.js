@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import React, { useState } from "react";
 import { COLORS, TEXTS } from "../constants";
 import { Pressable } from "react-native";
@@ -30,38 +30,46 @@ const Rating = (props) => {
     return stars;
   };
   return (
-    <Pressable style={styles.container}>
-      <View style={styles.ratingContainer}>
-        <View style={styles.ratingContainerHeader}>
-          <Text style={[TEXTS.titleText2, { marginLeft: 0 }]}>
-            Give Rating To Recipe
-          </Text>
-          <Entypo
-            name="cross"
-            size={24}
-            color="#172b4d"
+    <Pressable
+      style={styles.container}
+      onPress={() => {
+        setShowRating(false);
+        navigation.getParent("tabs").setOptions({ tabBarStyle: {} });
+      }}
+    >
+      <TouchableWithoutFeedback>
+        <View style={styles.ratingContainer}>
+          <View style={styles.ratingContainerHeader}>
+            <Text style={[TEXTS.titleText2, { marginLeft: 0 }]}>
+              Give Rating To Recipe
+            </Text>
+            <Entypo
+              name="cross"
+              size={24}
+              color="#172b4d"
+              onPress={() => {
+                navigation.getParent("tabs").setOptions({ tabBarStyle: {} });
+                setShowRating(false);
+              }}
+            />
+          </View>
+
+          <View style={styles.ratingContainerIcons}>{_renderIcons()}</View>
+
+          <Button
+            disabled={lastClickedIndex === -1}
+            style={{ marginHorizontal: horizontalScale(30), borderRadius: 12 }}
+            buttonColor="#172b4d"
+            mode="contained"
+            labelStyle={{ fontSize: moderateScale(14), textAlign: "center" }}
             onPress={() => {
-              navigation.getParent("tabs").setOptions({ tabBarStyle: {} });
-              setShowRating(false);
+              console.log(lastClickedIndex);
             }}
-          />
+          >
+            Send
+          </Button>
         </View>
-
-        <View style={styles.ratingContainerIcons}>{_renderIcons()}</View>
-
-        <Button
-          disabled={lastClickedIndex === -1}
-          style={{ marginHorizontal: horizontalScale(30), borderRadius: 12 }}
-          buttonColor="#172b4d"
-          mode="contained"
-          labelStyle={{ fontSize: moderateScale(14), textAlign: "center" }}
-          onPress={() => {
-            console.log(lastClickedIndex);
-          }}
-        >
-          Send
-        </Button>
-      </View>
+      </TouchableWithoutFeedback>
     </Pressable>
   );
 };

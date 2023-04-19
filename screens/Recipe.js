@@ -221,6 +221,7 @@ const Recipe = ({ route, navigation }) => {
           snap={snap}
         />
       ) : null}
+
       {_header()}
 
       <ImageBackground
