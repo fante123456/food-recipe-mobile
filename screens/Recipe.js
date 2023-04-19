@@ -1,15 +1,12 @@
 import {
   Animated,
-  Image,
   ImageBackground,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
-import { ExFood } from "../assets";
 import { LinearGradient } from "expo-linear-gradient";
 import { COLORS, TEXTS } from "../constants";
 import {
@@ -20,22 +17,24 @@ import {
 } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { Pressable } from "react-native";
-import { LayoutAnimation } from "react-native";
 import ExpandableIconCard from "../components/ExpandableIconCard";
-import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../hooks/useAuth";
 import { getFav, getStatus } from "../hooks/favs";
 import { getCollectionByField, updateField } from "../utils/firebaseConfig";
 import { arrayRemove, arrayUnion } from "firebase/firestore";
 import { hideBottomNavBar } from "../hooks/hideBottomNavBar";
-import { Snackbar } from "react-native-paper";
 import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
+import Rating from "../components/Rating";
+import { useNavigation } from "@react-navigation/native";
+import { currentUserSnap } from "../hooks/getCurrentUserSnap";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;
   const [bookmark, setBookmarkColor] = useState(COLORS.inActiveBookmarkColor);
   const [visible, setVisible] = useState(false);
   const [snackbarAttr, setSnacbakAttr] = useState({});
+  const [showRating, setShowRating] = useState(false);
+
   const user = useAuth();
 
   useEffect(() => {
@@ -64,7 +63,7 @@ const Recipe = ({ route, navigation }) => {
     if (bookmark === COLORS.inActiveBookmarkColor) {
       setSnacbakAttr({
         visible: true,
-        text: "Recipe added to your favorites",
+        text: "Recipe added to your favorites.",
       });
       updateField("User", user.user.uid, {
         favorites: arrayUnion(snap.documentId),
@@ -73,7 +72,7 @@ const Recipe = ({ route, navigation }) => {
     } else {
       setSnacbakAttr({
         visible: true,
-        text: "Recipe removed from your favorites",
+        text: "Recipe removed from your favorites.",
       });
       updateField("User", user.user.uid, {
         favorites: arrayRemove(snap.documentId),
@@ -98,6 +97,9 @@ const Recipe = ({ route, navigation }) => {
       </View>
     );
   };
+
+  const _checkRatedUsers = () =>
+    snap.rating?.some((obj) => obj.ratedBy === currentUserSnap().uid);
 
   const recipeInfo = () => {
     return (
@@ -126,7 +128,24 @@ const Recipe = ({ route, navigation }) => {
               ) : (
                 <Text>Admin</Text>
               )}
-              <View
+              <Pressable
+                onPress={() => {
+                  if (!_checkRatedUsers()) {
+                    setShowRating(true);
+                    navigation.getParent("tabs").setOptions({
+                      tabBarStyle: {
+                        backgroundColor: "black",
+                      },
+                    });
+                  } else {
+                    setVisible(true);
+
+                    setSnacbakAttr({
+                      visible: true,
+                      text: "You already rated this recipe.",
+                    });
+                  }
+                }}
                 style={{
                   flexDirection: "row",
                   justifyContent: "center",
@@ -141,7 +160,7 @@ const Recipe = ({ route, navigation }) => {
                     maximumFractionDigits: 1,
                   }).format(rating)}
                 </Text>
-              </View>
+              </Pressable>
             </View>
           </View>
 
@@ -195,6 +214,13 @@ const Recipe = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {showRating ? (
+        <Rating
+          navigation={navigation}
+          setShowRating={setShowRating}
+          snap={snap}
+        />
+      ) : null}
       {_header()}
 
       <ImageBackground

@@ -323,7 +323,7 @@ const Comments = ({ route, navigation }) => {
             position={"center"}
           />
           <View style={styles.commentInput}>
-            <View style={{}}>
+            <View style={{ flex: 1 }}>
               <CustomTextInput
                 _submitComment={_submitComment}
                 inputRef={inputRef}
