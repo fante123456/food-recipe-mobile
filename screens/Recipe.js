@@ -34,6 +34,8 @@ const Recipe = ({ route, navigation }) => {
   const [visible, setVisible] = useState(false);
   const [snackbarAttr, setSnacbakAttr] = useState({});
   const [showRating, setShowRating] = useState(false);
+  const [rat, setRat] = useState(rating);
+  const [sumRating, setSumRating] = useState(0);
 
   const user = useAuth();
 
@@ -98,6 +100,13 @@ const Recipe = ({ route, navigation }) => {
     );
   };
 
+  const _calculateRatingSum = () => {
+    let ratingOfTheItem = 0;
+    snap.rating?.map((e) => {
+      ratingOfTheItem += e.number;
+    });
+    setSumRating(ratingOfTheItem);
+  };
   const _checkRatedUsers = () =>
     snap.rating?.some((obj) => obj.ratedBy === currentUserSnap().uid);
 
@@ -131,6 +140,7 @@ const Recipe = ({ route, navigation }) => {
               <Pressable
                 onPress={() => {
                   if (!_checkRatedUsers()) {
+                    _calculateRatingSum();
                     setShowRating(true);
                     navigation.getParent("tabs").setOptions({
                       tabBarStyle: {
@@ -158,7 +168,7 @@ const Recipe = ({ route, navigation }) => {
                 <Text style={{}}>
                   {new Intl.NumberFormat("en-IN", {
                     maximumFractionDigits: 1,
-                  }).format(rating)}
+                  }).format(rat)}
                 </Text>
               </Pressable>
             </View>
@@ -216,9 +226,13 @@ const Recipe = ({ route, navigation }) => {
     <View style={styles.container}>
       {showRating ? (
         <Rating
+          snap={snap}
           navigation={navigation}
           setShowRating={setShowRating}
-          snap={snap}
+          setRat={setRat}
+          sumRating={sumRating}
+          length={snap.rating ? snap.rating.length : 1}
+          documentId={snap.documentId}
         />
       ) : null}
 

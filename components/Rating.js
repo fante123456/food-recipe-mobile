@@ -5,11 +5,47 @@ import { Pressable } from "react-native";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { Entypo, Octicons } from "@expo/vector-icons";
 import { Button } from "react-native-paper";
+import { currentUserSnap } from "../hooks/getCurrentUserSnap";
+import { updateField } from "../utils/firebaseConfig";
+import { arrayUnion } from "firebase/firestore";
 
 const Rating = (props) => {
-  const { navigation, setShowRating, snap } = props;
+  const {
+    navigation,
+    setShowRating,
+    setRat,
+    sumRating,
+    length,
+    documentId,
+    snap,
+  } = props;
   const [lastClickedIndex, setLastClickedIndex] = useState(-1);
 
+  const _hide = () => {
+    setShowRating(false);
+    navigation.getParent("tabs").setOptions({ tabBarStyle: {} });
+  };
+  const _handleSubmit = () => {
+    setRat(
+      length !== 1
+        ? (lastClickedIndex + sumRating) / (length + 1)
+        : (lastClickedIndex + sumRating) / length
+    );
+
+    //aynı sayfadan cikmaz ise bunu onceden ratelediniz desin diye yapiyorum
+    snap.rating = [...snap.rating, { ratedBy: currentUserSnap().uid }];
+
+    if (
+      updateField("post", documentId, {
+        rating: arrayUnion({
+          ratedBy: currentUserSnap().uid,
+          number: lastClickedIndex,
+        }),
+      })
+    ) {
+      _hide();
+    }
+  };
   const _renderIcons = () => {
     const stars = [];
     for (let index = 1; index <= 5; index++) {
@@ -33,8 +69,7 @@ const Rating = (props) => {
     <Pressable
       style={styles.container}
       onPress={() => {
-        setShowRating(false);
-        navigation.getParent("tabs").setOptions({ tabBarStyle: {} });
+        _hide();
       }}
     >
       <TouchableWithoutFeedback>
@@ -48,8 +83,7 @@ const Rating = (props) => {
               size={24}
               color="#172b4d"
               onPress={() => {
-                navigation.getParent("tabs").setOptions({ tabBarStyle: {} });
-                setShowRating(false);
+                _hide();
               }}
             />
           </View>
@@ -62,9 +96,7 @@ const Rating = (props) => {
             buttonColor="#172b4d"
             mode="contained"
             labelStyle={{ fontSize: moderateScale(14), textAlign: "center" }}
-            onPress={() => {
-              console.log(lastClickedIndex);
-            }}
+            onPress={() => _handleSubmit()}
           >
             Send
           </Button>
@@ -73,7 +105,6 @@ const Rating = (props) => {
     </Pressable>
   );
 };
-
 export default Rating;
 
 const styles = StyleSheet.create({

@@ -158,3 +158,16 @@ export const searchRecipe = async (recipe) => {
   }
   return data;
 };
+
+export const onSnap = (collection, docField, field, setter) => {
+  const userRef = collection(db, collection);
+  const q = query(userRef, where(docField, "==", field));
+  let data = [];
+  unsubscribe = onSnapshot(q, (querySnapshot) => {
+    let data = [];
+    querySnapshot.forEach((doc) => {
+      data.push(doc.data());
+    });
+    setter(data);
+  });
+};

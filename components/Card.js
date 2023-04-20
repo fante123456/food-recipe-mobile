@@ -9,30 +9,30 @@ import {
 import React, { useEffect, useState } from "react";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { TEXTS } from "../constants";
-import { ExFood } from "../assets";
 import { FlatList } from "react-native-gesture-handler";
 import { async } from "@firebase/util";
-import { getCollectionByFieldInArray } from "../utils/firebaseConfig";
+import { getCollectionByFieldInArray, onSnap } from "../utils/firebaseConfig";
 import { Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import SeeAll from "../screens/SeeAll";
 
 const Card = (props) => {
   const { field, docField, propTitle } = props;
 
   const navigation = useNavigation();
-
   const [snap, setSnap] = useState([]);
 
   useEffect(() => {
+    console.log("123123");
     if (snap.length < 1) getData();
   }, []);
 
   const getData = async () => {
-    await getCollectionByFieldInArray("post", docField, field).then((e) => {
-      console.log("card view");
-      setSnap(e);
-    });
+    // await getCollectionByFieldInArray("post", docField, field).then((e) => {
+    //   console.log("card view");
+    //   setSnap(e);
+    // });
+
+    onSnap("post", docField, field, { setSnap });
   };
 
   const Item = ({ image, title, addedBy, itemSnap, rating }) => {
