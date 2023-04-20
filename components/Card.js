@@ -23,7 +23,7 @@ const Card = (props) => {
 
   useEffect(() => {
     console.log("123123");
-    if (snap.length < 1) getData();
+    getData();
   }, []);
 
   const getData = async () => {
@@ -32,7 +32,7 @@ const Card = (props) => {
     //   setSnap(e);
     // });
 
-    onSnap("post", docField, field, { setSnap });
+    onSnap("post", docField, field, setSnap);
   };
 
   const Item = ({ image, title, addedBy, itemSnap, rating }) => {

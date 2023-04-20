@@ -159,15 +159,16 @@ export const searchRecipe = async (recipe) => {
   return data;
 };
 
-export const onSnap = (collection, docField, field, setter) => {
-  const userRef = collection(db, collection);
+export const onSnap = async (collectionName, docField, field, setter) => {
+  const userRef = collection(db, collectionName);
   const q = query(userRef, where(docField, "==", field));
   let data = [];
   unsubscribe = onSnapshot(q, (querySnapshot) => {
     let data = [];
     querySnapshot.forEach((doc) => {
       data.push(doc.data());
+      setter((oldValues) => [...oldValues, doc.data()]);
     });
-    setter(data);
   });
+  console.log(data);
 };
