@@ -12,7 +12,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TEXTS } from "../constants";
 import { getCollectionByFieldInArray } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
-import HudView from "./HudView";
 
 const Category = (props) => {
   const { setLoading } = props;
@@ -65,7 +64,7 @@ const Category = (props) => {
         onPress={() => {
           setLoading(true);
           getData("category", title).then((snap) => {
-            // console.log(snap);
+            console.log(snap.documentId);
             navigation.push("SeeAll", {
               selectedSnap: snap,
               title: title,

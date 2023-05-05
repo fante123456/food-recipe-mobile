@@ -1,6 +1,11 @@
 import { Alert, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { auth, db, getCollectionByField } from "../utils/firebaseConfig";
+import {
+  auth,
+  db,
+  getCollectionByField,
+  onSnap,
+} from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { horizontalScale, moderateScale } from "../Metrics";

@@ -33,7 +33,9 @@ const Rating = (props) => {
     );
 
     //aynı sayfadan cikmaz ise bunu onceden ratelediniz desin diye yapiyorum
-    snap.rating = [...snap.rating, { ratedBy: currentUserSnap().uid }];
+    if (snap.rating) {
+      snap.rating = [...snap.rating, { ratedBy: currentUserSnap().uid }];
+    }
 
     if (
       updateField("post", documentId, {

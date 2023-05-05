@@ -24,9 +24,9 @@ const SeeAll = ({ route, navigation }) => {
         onPress={() => {
           navigation.push("RecipePage", {
             snap: itemSnap,
-            rating:ratingOfTheItem
+            rating: ratingOfTheItem,
           });
-          console.log(itemSnap.title);
+          console.log(itemSnap.documentId);
         }}
       >
         <View

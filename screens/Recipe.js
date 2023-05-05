@@ -1,10 +1,4 @@
-import {
-  Animated,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { LinearGradient } from "expo-linear-gradient";
@@ -27,6 +21,7 @@ import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
 import Rating from "../components/Rating";
 import { useNavigation } from "@react-navigation/native";
 import { currentUserSnap } from "../hooks/getCurrentUserSnap";
+import { Animated } from "react-native";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;
@@ -36,7 +31,6 @@ const Recipe = ({ route, navigation }) => {
   const [showRating, setShowRating] = useState(false);
   const [rat, setRat] = useState(rating);
   const [sumRating, setSumRating] = useState(0);
-
   const user = useAuth();
 
   useEffect(() => {

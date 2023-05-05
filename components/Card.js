@@ -11,9 +11,14 @@ import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
 import { TEXTS } from "../constants";
 import { FlatList } from "react-native-gesture-handler";
 import { async } from "@firebase/util";
-import { getCollectionByFieldInArray, onSnap } from "../utils/firebaseConfig";
+import {
+  db,
+  getCollectionByFieldInArray,
+  onSnap,
+} from "../utils/firebaseConfig";
 import { Octicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 
 const Card = (props) => {
   const { field, docField, propTitle } = props;
@@ -22,7 +27,7 @@ const Card = (props) => {
   const [snap, setSnap] = useState([]);
 
   useEffect(() => {
-    console.log("123123");
+    console.log("card getdata use effect");
     getData();
   }, []);
 
@@ -30,6 +35,16 @@ const Card = (props) => {
     // await getCollectionByFieldInArray("post", docField, field).then((e) => {
     //   console.log("card view");
     //   setSnap(e);
+    // });
+
+    // const userRef = collection(db, "post");
+    // const q = query(userRef, where(docField, "==", field));
+    // unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //   let data = [];
+    //   querySnapshot.forEach((doc) => {
+    //     data.push(doc.data());
+    //   });
+    //   setSnap(data);
     // });
 
     onSnap("post", docField, field, setSnap);
