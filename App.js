@@ -11,6 +11,7 @@ import { ForgotPassword, Login, Signup, Home } from "./screens";
 import { auth } from "./utils/firebaseConfig";
 import UserStack from "./navigation/userStack";
 import AuthStack from "./navigation/authStack";
+import { useUserContext, UserProvider } from "./hooks/UserContext";
 
 const Stack = createNativeStackNavigator();
 const AuthhenticatedUserContext = createContext({});
@@ -47,14 +48,27 @@ const RootNavigator = () => {
   return (
     <NavigationContainer>
       {/* {user ? <HomeStack /> : <AuthStack />} */}
-      {user ? <UserStack /> : <AuthStack />}
+      {user ? (
+        <UserProvider>
+          <UserStack />
+        </UserProvider>
+      ) : (
+        <AuthStack />
+      )}
     </NavigationContainer>
   );
 };
 export default function App() {
+  // return (
+  //   <AuthhenticatedUserProvider>
+  //     <RootNavigator />
+  //   </AuthhenticatedUserProvider>
+  // );
   return (
     <AuthhenticatedUserProvider>
+      {/* <UserProvider> */}
       <RootNavigator />
+      {/* </UserProvider> */}
     </AuthhenticatedUserProvider>
   );
 }

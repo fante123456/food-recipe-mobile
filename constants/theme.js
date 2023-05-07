@@ -58,6 +58,12 @@ export const TEXTS = {
   recipeCardText: {
     fontSize: moderateScale(16),
   },
+
+  ppAbout: {
+    fontWeight: "bold",
+    fontSize: moderateScale(16),
+    color: "tomato",
+  },
 };
 
 export const BODY = {

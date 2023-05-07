@@ -4,12 +4,12 @@ import { horizontalScale } from "../Metrics";
 import { Image } from "react-native";
 
 const UserAvatar = (props) => {
-  const { image, width, height, position } = props;
+  const { image, width, height, position, marginLeft } = props;
   return (
     <View
       style={{
         height: height,
-        marginLeft: horizontalScale(10),
+        marginLeft: marginLeft === 0 ? marginLeft : horizontalScale(10),
         alignSelf: position,
       }}
     >
@@ -20,7 +20,7 @@ const UserAvatar = (props) => {
         style={{
           flex: 1,
           width: width,
-          borderRadius: 30,
+          borderRadius: 100,
         }}
       />
     </View>

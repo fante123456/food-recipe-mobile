@@ -143,6 +143,7 @@ const Comments = ({ route, navigation }) => {
               width={55}
               height={55}
               position={"flex-start"}
+              marginLeft={10}
             />
 
             <View

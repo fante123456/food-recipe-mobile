@@ -4,10 +4,14 @@ import { moderateScale } from "../Metrics";
 import { defAvatar } from "../assets";
 import { TouchableOpacity } from "react-native";
 import { auth } from "../utils/firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+import { useUserContext } from "../hooks/UserContext";
 
 const Avatar = (props) => {
+  const navigation = useNavigation();
   //homepage
-  const { avatar } = props;
+
+  const { avatar, itemSnap } = props;
   return (
     <View style={styles.container}>
       <Pressable
@@ -20,6 +24,7 @@ const Avatar = (props) => {
           //     Alert.alert("succes");
           //   })
           //   .catch((err) => console.log(err));
+          navigation.push("Profile", { snap: null });
         }}
       >
         <Image source={{ uri: avatar }} style={styles.image} />

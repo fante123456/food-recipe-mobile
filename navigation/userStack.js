@@ -9,6 +9,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Test from "../screens/Test";
 import Recipe from "../screens/Recipe";
 import { Comments } from "../screens";
+import Profile from "../screens/Profile";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -75,6 +76,13 @@ function HomeStackScreen() {
         name="Comments"
         component={Comments}
       />
+      <HomeStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Profile"
+        component={Profile}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -84,7 +92,7 @@ const TestStack = createNativeStackNavigator();
 function TestStackScreen() {
   return (
     <TestStack.Navigator screenOptions={{}}>
-      <TestStack.Screen name="Comments" component={Comments} />
+      <TestStack.Screen name="Profile" component={Profile} />
     </TestStack.Navigator>
   );
 }

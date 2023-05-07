@@ -1,7 +1,9 @@
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { moderateScale, verticalScale } from "../../Metrics";
 import Ripple from "react-native-material-ripple";
+import { TouchableNativeFeedback } from "react-native";
+import { Pressable } from "react-native";
 
 const RoundedButton = (props) => {
   const { text, buttonOnPress } = props;
@@ -22,6 +24,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: verticalScale(20),
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 5,
   },
   buttonText: {
     fontSize: moderateScale(18),

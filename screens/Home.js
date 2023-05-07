@@ -1,5 +1,5 @@
 import { Alert, StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   auth,
   db,
@@ -18,9 +18,15 @@ import HudView from "../components/HudView";
 import { TextInput } from "react-native-gesture-handler";
 import { useAuth } from "../hooks/useAuth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import { setCurrentUserSnap } from "../hooks/getCurrentUserSnap";
+import {
+  currentUserSnap,
+  setCurrentUserSnap,
+} from "../hooks/getCurrentUserSnap";
+import { useUserContext } from "../hooks/UserContext";
 
 const Home = () => {
+  const { userSnapTest, setUserSnapTest } = useUserContext();
+
   const user = useAuth();
   // const [search, setSearch] = useState("");
   const [userSnap, setUserSnap] = useState({});
@@ -42,16 +48,24 @@ const Home = () => {
   };
 
   useEffect(() => {
+    let unsubscribe;
+
     if (user.user && Object.keys(userSnap).length === 0) {
       const userRef = collection(db, "User");
       const q = query(userRef, where("uid", "==", user.user.uid));
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      unsubscribe = onSnapshot(q, (querySnapshot) => {
         querySnapshot.forEach((doc) => {
           setUserSnap(doc.data());
           setCurrentUserSnap(doc.data());
+          setUserSnapTest(doc.data());
         });
       });
 
+      return () => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      };
       // getCollectionByField("User", "uid", user.user.uid).then((snapshot) => {
       //   setUserSnap(snapshot);
       // });
