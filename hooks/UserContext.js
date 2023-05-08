@@ -4,7 +4,6 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userSnapTest, setUserSnapTest] = useState({});
-
   return (
     <UserContext.Provider value={{ userSnapTest, setUserSnapTest }}>
       {children}

@@ -2,7 +2,13 @@ import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { db, getFavorites, updateField } from "../utils/firebaseConfig";
+import {
+  db,
+  getCollectionByField,
+  getFavorites,
+  onSnap,
+  updateField,
+} from "../utils/firebaseConfig";
 import { useAuth } from "../hooks/useAuth";
 import HudView from "../components/HudView";
 import {
@@ -18,13 +24,16 @@ import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { setFav } from "../hooks/favs";
 import { TEXTS } from "../constants";
+import { useUserContext } from "../hooks/UserContext";
 
 const Favorites = () => {
-  const isFocused = useIsFocused();
+  const { userSnapTest, setUserSnapTest } = useUserContext();
   const navigation = useNavigation();
   const user = useAuth();
   const [snap, setSnap] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [testSnap, setTestSnap] = useState({});
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     setLoading(true);
@@ -32,7 +41,20 @@ const Favorites = () => {
     if (user.user !== undefined) {
       _getData(user.user.uid);
     }
-  }, [user.user]);
+    // if (Object.keys(snap).length !== 0) {
+    //   setLoading(false);
+    // }
+  }, [user.user, isFocused]);
+
+  // useEffect(() => {
+  //   if (Object.keys(testSnap).length > 0) {
+  //     console.log("cik");
+  //     navigation.push("Profile", {
+  //       userSnap: testSnap[0],
+  //     });
+  //     setLoading(false);
+  //   }
+  // }, [testSnap]);
 
   const _getData = (uid) => {
     const userRef = collection(db, "User");
@@ -73,7 +95,8 @@ const Favorites = () => {
   };
 
   const Item = ({ image, title, itemSnap, rating }) => {
-    let addedBy = itemSnap.uid !== "admin" ? itemSnap.addedBy : "admin";
+    let addedBy =
+      itemSnap.uid !== "admin" ? itemSnap.addedBy.slice(0, 16) : "admin";
     let ratingOfTheItem = 0;
     if (rating) {
       rating.map((e) => {
@@ -111,7 +134,16 @@ const Favorites = () => {
                 onPress={
                   addedBy !== "admin"
                     ? () => {
-                        console.log(addedBy);
+                        setLoading(true);
+
+                        onSnap("User", "uid", itemSnap.addedBy, setTestSnap);
+                        // getCollectionByField(
+                        //   "User",
+                        //   "uid",
+                        //   itemSnap.addedBy
+                        // ).then((userSnap) => {
+
+                        // });
                       }
                     : null
                 }

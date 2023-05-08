@@ -4,6 +4,7 @@ import {
   auth,
   db,
   getCollectionByField,
+  getFavorites,
   onSnap,
 } from "../utils/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
@@ -23,10 +24,9 @@ import {
   setCurrentUserSnap,
 } from "../hooks/getCurrentUserSnap";
 import { useUserContext } from "../hooks/UserContext";
+import { setFav } from "../hooks/favs";
 
 const Home = () => {
-  const { userSnapTest, setUserSnapTest } = useUserContext();
-
   const user = useAuth();
   // const [search, setSearch] = useState("");
   const [userSnap, setUserSnap] = useState({});
@@ -57,7 +57,6 @@ const Home = () => {
         querySnapshot.forEach((doc) => {
           setUserSnap(doc.data());
           setCurrentUserSnap(doc.data());
-          setUserSnapTest(doc.data());
         });
       });
 
@@ -85,6 +84,12 @@ const Home = () => {
     //   docField: "category",
     //   propTitle: "Popular",
     // },
+    // {
+    //   id: 3,
+    //   field: "user",
+    //   docField: "category",
+    //   propTitle: "User Recipes",
+    // },
   ];
   return (
     <SafeAreaView style={styles.container}>
@@ -96,7 +101,7 @@ const Home = () => {
             {/* <SearchBar setVal={setSearch} /> */}
             <SearchBar setLoading={setLoading} />
 
-            <Avatar avatar={userSnap.photoUrl} />
+            <Avatar avatar={userSnap.photoUrl} userSnap={userSnap} />
           </View>
           <Category setLoading={setLoading} />
 

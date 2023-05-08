@@ -170,3 +170,4 @@ export const onSnap = async (collectionName, docField, field, setter) => {
     setter(data);
   });
 };
+

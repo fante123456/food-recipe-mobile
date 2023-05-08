@@ -14,7 +14,11 @@ import { Pressable } from "react-native";
 import ExpandableIconCard from "../components/ExpandableIconCard";
 import { useAuth } from "../hooks/useAuth";
 import { getFav, getStatus } from "../hooks/favs";
-import { getCollectionByField, updateField } from "../utils/firebaseConfig";
+import {
+  getCollectionByField,
+  onSnap,
+  updateField,
+} from "../utils/firebaseConfig";
 import { arrayRemove, arrayUnion } from "firebase/firestore";
 import { hideBottomNavBar } from "../hooks/hideBottomNavBar";
 import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
@@ -22,9 +26,12 @@ import Rating from "../components/Rating";
 import { useNavigation } from "@react-navigation/native";
 import { currentUserSnap } from "../hooks/getCurrentUserSnap";
 import { Animated } from "react-native";
+import UserAvatar from "../components/UserAvatar";
+import { useUserContext } from "../hooks/UserContext";
 
 const Recipe = ({ route, navigation }) => {
   const { snap, rating } = route.params;
+  const [recipeOwner, setRecipeOwner] = useState({});
   const [bookmark, setBookmarkColor] = useState(COLORS.inActiveBookmarkColor);
   const [visible, setVisible] = useState(false);
   const [snackbarAttr, setSnacbakAttr] = useState({});
@@ -32,6 +39,7 @@ const Recipe = ({ route, navigation }) => {
   const [rat, setRat] = useState(rating);
   const [sumRating, setSumRating] = useState(0);
   const user = useAuth();
+  const { userSnapTest, setUserSnapTest } = useUserContext();
 
   useEffect(() => {
     if (getStatus() && user.user === undefined) {
@@ -43,6 +51,10 @@ const Recipe = ({ route, navigation }) => {
       });
     } else if (!getStatus() && user.user !== undefined) {
       _getFavsFromDatabase();
+    }
+
+    if (Object.keys(recipeOwner).length === 0 && snap) {
+      _getRecipeOwner();
     }
   }, [user.user]);
 
@@ -104,6 +116,12 @@ const Recipe = ({ route, navigation }) => {
   const _checkRatedUsers = () =>
     snap.rating?.some((obj) => obj.ratedBy === currentUserSnap().uid);
 
+  const _getRecipeOwner = () => {
+    onSnap("User", "uid", snap.uid, setRecipeOwner);
+    // getCollectionByField("User", "uid", snap.uid).then((data) =>
+    //   setRecipeOwner(data)
+    // );
+  };
   const recipeInfo = () => {
     return (
       <View style={styles.recipeCardContainer}>
@@ -123,11 +141,22 @@ const Recipe = ({ route, navigation }) => {
               {snap.title}
             </Text>
             <View style={{ flexDirection: "row" }}>
-              {snap.uid !== "admin" ? (
-                <>
-                  <Text>avatar </Text>
-                  <Text>username </Text>
-                </>
+              {snap.uid !== "admin" && Object.keys(recipeOwner).length > 0 ? (
+                <Pressable
+                  style={styles.userAvatar}
+                  onPress={() => {
+                    navigation.push("Profile", { userSnap: recipeOwner[0] });
+                  }}
+                >
+                  <UserAvatar
+                    image={recipeOwner[0].photoUrl}
+                    width={30}
+                    height={30}
+                    position={"flex-start"}
+                    marginLeft={0}
+                  />
+                  <Text>{recipeOwner[0].username.slice(0, 16)} </Text>
+                </Pressable>
               ) : (
                 <Text>Admin</Text>
               )}
@@ -178,17 +207,20 @@ const Recipe = ({ route, navigation }) => {
       </View>
     );
   };
-
   const expandableIconCard = [
     {
       icon: <Ionicons name="information-circle-outline" size={24} />,
       title: "Brief",
-      content: snap.brief.replace(/(<([^>]+)>)/gi, ""),
+      content: Array.isArray(snap.brief)
+        ? snap.brief
+        : snap.brief.replace(/(<([^>]+)>)/gi, ""),
     },
     {
       icon: <Ionicons name="reader-outline" size={24} />,
       title: "Instructions",
-      content: snap.instruction.replace(/(<([^>]+)>)/gi, ""),
+      content: Array.isArray(snap.instruction)
+        ? snap.instruction
+        : snap.instruction.replace(/(<([^>]+)>)/gi, ""),
     },
     {
       icon: <MaterialCommunityIcons name="bowl-mix-outline" size={24} />,
@@ -215,7 +247,6 @@ const Recipe = ({ route, navigation }) => {
       </View>
     );
   };
-
   return (
     <View style={styles.container}>
       {showRating ? (
@@ -232,10 +263,18 @@ const Recipe = ({ route, navigation }) => {
 
       {_header()}
 
-      <ImageBackground
+      {/* <ImageBackground
         style={styles.image}
         source={{ uri: snap.coverImagePath }}
-      />
+        resizeMode="cover"
+      /> */}
+      <View style={{ height: moderateScale(280) }}>
+        <ImageBackground
+          style={{ flex: 1 }}
+          source={{ uri: snap.coverImagePath }}
+          resizeMode="stretch"
+        />
+      </View>
       {_topLinear()}
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -334,5 +373,12 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(15),
     color: "#fff",
     fontWeight: "bold",
+  },
+  userAvatar: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: moderateScale(10),
+    marginTop: verticalScale(5),
   },
 });

@@ -11,7 +11,7 @@ const Avatar = (props) => {
   const navigation = useNavigation();
   //homepage
 
-  const { avatar, itemSnap } = props;
+  const { avatar, userSnap } = props;
   return (
     <View style={styles.container}>
       <Pressable
@@ -24,7 +24,7 @@ const Avatar = (props) => {
           //     Alert.alert("succes");
           //   })
           //   .catch((err) => console.log(err));
-          navigation.push("Profile", { snap: null });
+          navigation.push("Profile", { userSnap: userSnap });
         }}
       >
         <Image source={{ uri: avatar }} style={styles.image} />

@@ -5,6 +5,7 @@ import { Image } from "react-native";
 
 const UserAvatar = (props) => {
   const { image, width, height, position, marginLeft } = props;
+
   return (
     <View
       style={{

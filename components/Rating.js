@@ -8,6 +8,7 @@ import { Button } from "react-native-paper";
 import { currentUserSnap } from "../hooks/getCurrentUserSnap";
 import { updateField } from "../utils/firebaseConfig";
 import { arrayUnion } from "firebase/firestore";
+import { useUserContext } from "../hooks/UserContext";
 
 const Rating = (props) => {
   const {
@@ -20,6 +21,7 @@ const Rating = (props) => {
     snap,
   } = props;
   const [lastClickedIndex, setLastClickedIndex] = useState(-1);
+  const { userSnapTest, setUserSnapTest } = useUserContext();
 
   const _hide = () => {
     setShowRating(false);
@@ -45,6 +47,14 @@ const Rating = (props) => {
         }),
       })
     ) {
+      // x.rating.map((obj) => {
+      //   obj.forEach((element) => {
+      //     if (!element.number) {
+      //       element["number"] = lastClickedIndex;
+      //     }
+      //   });
+      // });
+      // setUserSnapTest(x);
       _hide();
     }
   };

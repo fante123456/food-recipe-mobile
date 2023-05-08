@@ -25,7 +25,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
-import { db } from "../utils/firebaseConfig";
+import { db, getCollectionByField } from "../utils/firebaseConfig";
 import { COLORS, TEXTS } from "../constants";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../hooks/useAuth";
@@ -36,6 +36,7 @@ import ReplyComment from "../components/Comment/ReplyComment";
 import CommentDeleteAlert from "../components/Buttons/Alert/CommentDeleteAlert";
 import HudView from "../components/HudView";
 import UserAvatar from "../components/UserAvatar";
+import { useIsFocused } from "@react-navigation/native";
 
 const Comments = ({ route, navigation }) => {
   hideBottomNavBar(navigation);
@@ -45,6 +46,7 @@ const Comments = ({ route, navigation }) => {
   const [loading, setLoading] = useState(false);
   const [isReplying, setReplying] = useState(false);
   const [replyValues, setReplyValues] = useState({});
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     if (commentSnapshot.length === 0) {
@@ -138,13 +140,24 @@ const Comments = ({ route, navigation }) => {
           }}
         >
           <View style={styles.categoryStyle}>
-            <UserAvatar
-              image={image}
-              width={55}
-              height={55}
-              position={"flex-start"}
-              marginLeft={10}
-            />
+            <Pressable
+              style={{ alignSelf: "flex-start" }}
+              onPress={() => {
+                getCollectionByField("User", "uid", itemSnap.uid).then(
+                  (data) => {
+                    navigation.push("Profile", { userSnap: data });
+                  }
+                );
+              }}
+            >
+              <UserAvatar
+                image={image}
+                width={55}
+                height={55}
+                position={"flex-start"}
+                marginLeft={10}
+              />
+            </Pressable>
 
             <View
               style={{

@@ -11,41 +11,61 @@ import { useAuth } from "../hooks/useAuth";
 import { SegmentedButtons } from "react-native-paper";
 import { FlatList, ScrollView } from "react-native-gesture-handler";
 import {
+  getCollectionByField,
   getCollectionByFieldInArray,
   getFavorites,
+  manageFollow,
   onSnap,
+  updateField,
 } from "../utils/firebaseConfig";
 import { Image } from "react-native";
 import { FlashList } from "@shopify/flash-list";
+import { arrayRemove, arrayUnion, increment } from "firebase/firestore";
+import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
 
 const Profile = ({ route, navigation }) => {
   // const snap = currentUserSnap();
-  const { snap } = route.params;
-  const { userSnapTest } = useUserContext();
-  const [data, setData] = useState([]);
-  const [favData, setFavData] = useState([]);
-  if (snap !== null) {
-    userSnapTest = snap;
-  }
-
-  const [value, setValue] = useState("myRecipes");
+  // const { userSnap, setuserSnap } = useUserContext();
 
   const user = useAuth();
+  const { userSnap } = route.params;
+  const [data, setData] = useState([]);
+  const [favData, setFavData] = useState([]);
+  const [value, setValue] = useState("myRecipes");
+  const [isFollowing, setFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [snackbarAttr, setSnacbakAttr] = useState({});
+
+  useEffect(() => {
+    navigation.setOptions({ title: userSnap.username.slice(0, 16) });
+    if (data.length === 0) {
+      console.log("girdi");
+      // onSnap("post", "uid", userSnap.uid, setData);
+      getCollectionByFieldInArray("post", "uid", userSnap.uid).then((data) => {
+        setData(data);
+        currentUserSnap().following.includes(userSnap.uid)
+          ? setFollowing(true)
+          : setFollowing(false);
+        setFollowerCount(userSnap.followers);
+      });
+      getFavorites(userSnap.favorites).then((favs) => setFavData(favs));
+    }
+  }, [userSnap.username]);
 
   const about = [
     {
       id: 1,
-      data: userSnapTest.numberOfPosts,
+      data: userSnap.numberOfPosts,
       text: "Recipe",
     },
     {
       id: 2,
-      data: userSnapTest.followers,
+      data: followerCount, //userSnap.followers,
       text: "Followers",
     },
     {
       id: 3,
-      data: userSnapTest.following.length,
+      data: userSnap.following.length,
       text: "Following",
     },
   ];
@@ -88,26 +108,50 @@ const Profile = ({ route, navigation }) => {
       </Pressable>
     );
   };
-  useEffect(() => {
-    navigation.setOptions({ title: userSnapTest.username });
-    if (data.length === 0) {
-      console.log("girdi");
-      // onSnap("post", "uid", userSnapTest.uid, setData);
-      getCollectionByFieldInArray("post", "uid", userSnapTest.uid).then(
-        (data) => setData(data)
-      );
-      getFavorites(userSnapTest.favorites).then((favs) => setFavData(favs));
-    }
-  }, [userSnapTest.username]);
+
+  const _manageFollow = (followingUid, followerUid, incrementValue) => {
+    updateField("User", followingUid, {
+      following:
+        incrementValue === 1
+          ? arrayUnion(followerUid)
+          : arrayRemove(followerUid),
+    }).then(() => {
+      if (incrementValue === 1) {
+        setFollowing(true);
+        setFollowerCount(followerCount + 1);
+      } else {
+        setFollowing(false);
+        setFollowerCount(followerCount - 1);
+      }
+      updateField("User", followerUid, {
+        followers: increment(incrementValue),
+      });
+    });
+  };
 
   const _handleButton = () => {
-    console.log("edit button");
+    if (user.user?.uid === userSnap.uid) {
+      console.log("13123213");
+    } else if (!isFollowing) {
+      _manageFollow(user.user.uid, userSnap.uid, 1);
+      setSnacbakAttr({
+        visible: true,
+        text: "Followed " + userSnap.username.slice(0, 16),
+      });
+    } else {
+      _manageFollow(user.user.uid, userSnap.uid, -1);
+      setSnacbakAttr({
+        visible: true,
+        text: "Unfollowed " + userSnap.username.slice(0, 16),
+      });
+    }
   };
 
   const _flatList = (snap) => {
     return (
       <View style={styles.flatListContainer}>
-        <FlatList
+        <FlashList
+          estimatedItemSize={149}
           // data={snap}
           data={snap.sort((a, b) => a.timestamp - b.timestamp)}
           numColumns={2}
@@ -131,7 +175,7 @@ const Profile = ({ route, navigation }) => {
         {/* pp */}
         <View style={{ flexDirection: "row" }}>
           <UserAvatar
-            image={userSnapTest.photoUrl}
+            image={userSnap.photoUrl}
             width={85}
             height={85}
             position={"flex-start"}
@@ -149,7 +193,7 @@ const Profile = ({ route, navigation }) => {
                 { fontSize: moderateScale(18), marginLeft: 0, marginTop: 0 },
               ]}
             >
-              {userSnapTest.username}
+              {userSnap.username.slice(0, 16)}
             </Text>
 
             <View style={styles.userStatContainer}>
@@ -173,12 +217,18 @@ const Profile = ({ route, navigation }) => {
         </View>
         {/* about */}
         <View style={styles.userAboutSection}>
-          <Text style={TEXTS.infoText}>{userSnapTest.about}</Text>
+          <Text style={TEXTS.infoText}>{userSnap.about}</Text>
         </View>
 
         <View style={styles.editButton}>
           <RoundedButton
-            text={user.user?.uid === userSnapTest.uid ? "Edit" : "Follow"}
+            text={
+              user.user?.uid === userSnap.uid
+                ? "Edit"
+                : isFollowing
+                ? "Unfollow"
+                : "Follow"
+            }
             buttonOnPress={_handleButton}
           />
         </View>
@@ -210,6 +260,10 @@ const Profile = ({ route, navigation }) => {
       </View>
 
       {value === "myRecipes" ? _flatList(data) : _flatList(favData)}
+
+      <View>
+        <CustomSnackbar snackbarAttr={snackbarAttr} setter={setSnacbakAttr} />
+      </View>
     </View>
   );
 };

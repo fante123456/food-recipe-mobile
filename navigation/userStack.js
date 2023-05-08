@@ -1,15 +1,15 @@
 import React from "react";
-import { Favorites, FavoritesScreen, Home, SeeAll } from "../screens";
+import { Favorites, FavoritesScreen, Home, Login, SeeAll } from "../screens";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import Test from "../screens/Test";
 import Recipe from "../screens/Recipe";
 import { Comments } from "../screens";
 import Profile from "../screens/Profile";
+import Settings from "../screens/Settings";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,10 +25,12 @@ export default function UserStack() {
 
           if (route.name === "Home") {
             iconName = focused ? "home" : "home-outline";
-          } else if (route.name === "Test") {
-            iconName = focused ? "ios-list" : "ios-list-outline";
           } else if (route.name === "Favorites") {
             iconName = focused ? "bookmark" : "bookmark-outline";
+          } else if (route.name === "Test") {
+            iconName = focused ? "ios-list" : "ios-list-outline";
+          } else if (route.name === "Setting") {
+            iconName = focused ? "cog" : "cog-outline";
           }
 
           // else if (route.name === "Settings") {
@@ -43,8 +45,9 @@ export default function UserStack() {
       })}
     >
       <Tab.Screen name="Home" component={HomeStackScreen} />
-      <Tab.Screen name="Test" component={TestStackScreen} />
       <Tab.Screen name="Favorites" component={FavoritesStackScreen} />
+      {/* <Tab.Screen name="Test" component={TestStackScreen} /> */}
+      <Tab.Screen name="Setting" component={SettingsStackScreen} />
     </Tab.Navigator>
   );
 }
@@ -92,8 +95,19 @@ const TestStack = createNativeStackNavigator();
 function TestStackScreen() {
   return (
     <TestStack.Navigator screenOptions={{}}>
-      <TestStack.Screen name="Profile" component={Profile} />
+      <TestStack.Screen name="Setting" component={Settings} />
     </TestStack.Navigator>
+  );
+}
+
+const SettingsStack = createNativeStackNavigator();
+
+function SettingsStackScreen() {
+  return (
+    <SettingsStack.Navigator screenOptions={{}}>
+      <SettingsStack.Screen name="Settings" component={Settings} />
+      <SettingsStack.Screen name="Login" component={Login} />
+    </SettingsStack.Navigator>
   );
 }
 
@@ -129,6 +143,13 @@ function FavoritesStackScreen() {
         }}
         name="Comments"
         component={Comments}
+      />
+      <HomeStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Profile"
+        component={Profile}
       />
     </FavoritesStack.Navigator>
   );
