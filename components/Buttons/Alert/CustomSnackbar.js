@@ -9,7 +9,7 @@ const CustomSnackbar = (props) => {
   return (
     <View style={styles.container}>
       <Snackbar
-        duration={550}
+        duration={600}
         visible={snackbarAttr.visible}
         onDismiss={onDismissSnackBar}
       >
