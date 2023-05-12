@@ -249,6 +249,8 @@ const Recipe = ({ route, navigation }) => {
   };
   return (
     <View style={styles.container}>
+      {_header()}
+
       {showRating ? (
         <Rating
           snap={snap}
@@ -260,8 +262,6 @@ const Recipe = ({ route, navigation }) => {
           documentId={snap.documentId}
         />
       ) : null}
-
-      {_header()}
 
       {/* <ImageBackground
         style={styles.image}

@@ -22,6 +22,8 @@ import { Image } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { arrayRemove, arrayUnion, increment } from "firebase/firestore";
 import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "../components/Navigation/Header";
 
 const Profile = ({ route, navigation }) => {
   // const snap = currentUserSnap();
@@ -173,8 +175,19 @@ const Profile = ({ route, navigation }) => {
       </View>
     );
   };
+
+  const _handleBackButton = () => {
+    navigation.goBack();
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Header
+        handlePress={_handleBackButton}
+        color="black"
+        headerTitle={userSnap.username}
+      />
+
       <View style={{ padding: moderateScale(20) }}>
         {/* pp */}
         <View style={{ flexDirection: "row" }}>
@@ -268,7 +281,7 @@ const Profile = ({ route, navigation }) => {
       <View>
         <CustomSnackbar snackbarAttr={snackbarAttr} setter={setSnacbakAttr} />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

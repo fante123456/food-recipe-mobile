@@ -82,14 +82,14 @@ function HomeStackScreen() {
       />
       <ProfileStack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
         name="Profile"
         component={Profile}
       />
       <ProfileStack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
         name="Edit"
         component={Edit}
