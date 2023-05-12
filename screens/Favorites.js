@@ -38,7 +38,8 @@ const Favorites = () => {
   useEffect(() => {
     setLoading(true);
     console.log("selam");
-    if (user.user !== undefined) {
+    if (user.user !== undefined && isFocused) {
+      console.log("xxxx");
       _getData(user.user.uid);
     }
     // if (Object.keys(snap).length !== 0) {
@@ -62,12 +63,14 @@ const Favorites = () => {
     let data = [];
     unsubscribe = onSnapshot(q, (querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        getFavorites(doc.data().favorites).then((values) => {
-          setSnap(values);
-          setLoading(false);
-          setFav(values);
-        });
+        if (doc.data().favorites.length > 0) {
+          getFavorites(doc.data().favorites).then((values) => {
+            setSnap(values);
+            setFav(values);
+          });
+        }
       });
+      setLoading(false);
     });
 
     // unsubscribe(); //?
@@ -136,14 +139,15 @@ const Favorites = () => {
                     ? () => {
                         setLoading(true);
 
-                        onSnap("User", "uid", itemSnap.addedBy, setTestSnap);
-                        // getCollectionByField(
-                        //   "User",
-                        //   "uid",
-                        //   itemSnap.addedBy
-                        // ).then((userSnap) => {
+                        // onSnap("User", "uid", itemSnap.addedBy, setTestSnap);
 
-                        // });
+                        getCollectionByField(
+                          "User",
+                          "uid",
+                          itemSnap.addedBy
+                        ).then((userSnap) => {
+                          navigation.push("Profile", { userSnap: userSnap });
+                        });
                       }
                     : null
                 }

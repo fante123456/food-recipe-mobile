@@ -3,6 +3,7 @@ import React from "react";
 import RoundedButton from "../components/Buttons/RoundedButton";
 import { auth } from "../utils/firebaseConfig";
 import Login from "./Login";
+import { Alert } from "react-native";
 
 const Settings = ({ navigation }) => {
   const _handleButton = () => {
@@ -10,7 +11,7 @@ const Settings = ({ navigation }) => {
     auth
       .signOut()
       .then(async () => {
-        Alert.alert("succes");
+        // Alert.alert("exited");
       })
       .catch((err) => console.log(err));
   };

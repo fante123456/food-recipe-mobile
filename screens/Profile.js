@@ -48,7 +48,9 @@ const Profile = ({ route, navigation }) => {
           : setFollowing(false);
         setFollowerCount(userSnap.followers);
       });
-      getFavorites(userSnap.favorites).then((favs) => setFavData(favs));
+      if (userSnap.favorites.length > 0) {
+        getFavorites(userSnap.favorites).then((favs) => setFavData(favs));
+      }
     }
   }, [userSnap.username]);
 
@@ -131,7 +133,9 @@ const Profile = ({ route, navigation }) => {
 
   const _handleButton = () => {
     if (user.user?.uid === userSnap.uid) {
-      console.log("13123213");
+      navigation.push("Edit", {
+        userSnap: userSnap,
+      });
     } else if (!isFollowing) {
       _manageFollow(user.user.uid, userSnap.uid, 1);
       setSnacbakAttr({

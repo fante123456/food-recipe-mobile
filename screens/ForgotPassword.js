@@ -23,7 +23,7 @@ const ForgotPassword = () => {
       .then(() => {
         // Password reset email sent!
         // ..
-        Alert.alert("success");
+        Alert.alert("Success", "Password reset mail has been sent");
         setLoading(false);
       })
       .catch((error) => {

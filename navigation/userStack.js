@@ -10,6 +10,7 @@ import Recipe from "../screens/Recipe";
 import { Comments } from "../screens";
 import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
+import Edit from "../screens/Edit";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -79,12 +80,19 @@ function HomeStackScreen() {
         name="Comments"
         component={Comments}
       />
-      <HomeStack.Screen
+      <ProfileStack.Screen
         options={{
           headerShown: true,
         }}
         name="Profile"
         component={Profile}
+      />
+      <ProfileStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Edit"
+        component={Edit}
       />
     </HomeStack.Navigator>
   );
@@ -108,6 +116,17 @@ function SettingsStackScreen() {
       <SettingsStack.Screen name="Settings" component={Settings} />
       <SettingsStack.Screen name="Login" component={Login} />
     </SettingsStack.Navigator>
+  );
+}
+
+const ProfileStack = createNativeStackNavigator();
+
+function ProfileStackScreen() {
+  return (
+    <ProfileStack.Navigator screenOptions={{}}>
+      <ProfileStack.Screen name="Profile" component={Profile} />
+      <ProfileStack.Screen name="Edit" component={Edit} />
+    </ProfileStack.Navigator>
   );
 }
 
