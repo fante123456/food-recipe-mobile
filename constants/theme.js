@@ -6,6 +6,7 @@ export const COLORS = {
   grey: "#5A6780",
   grey2: "#F3F3F3",
   textGrey: "#7C7C7C",
+  darkBlue: "#172b4d",
   activeBookmarkColor: "#FFC702",
   inActiveBookmarkColor: "#D7D7D9",
 

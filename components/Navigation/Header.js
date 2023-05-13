@@ -13,7 +13,7 @@ const Header = (params) => {
       <Text
         style={{
           color: { color },
-          fontSize: moderateScale(18),
+          fontSize: moderateScale(16),
           fontWeight: "bold",
         }}
       >
