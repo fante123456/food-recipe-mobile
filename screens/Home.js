@@ -72,12 +72,12 @@ const Home = () => {
   }, [user.user]);
 
   const categoryCard = [
-    {
-      id: 1,
-      field: "veggie",
-      docField: "category",
-      propTitle: "Veggies",
-    },
+    // {
+    //   id: 1,
+    //   field: "veggie",
+    //   docField: "category",
+    //   propTitle: "Veggies",
+    // },
     // {
     //   id: 2,
     //   field: "popular",

@@ -11,6 +11,7 @@ import { Comments } from "../screens";
 import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
 import Edit from "../screens/Edit";
+import AddRecipe from "../screens/AddRecipe";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,6 +22,8 @@ export default function UserStack() {
       id="tabs"
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarHideOnKeyboard: true,
+
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
@@ -32,6 +35,8 @@ export default function UserStack() {
             iconName = focused ? "ios-list" : "ios-list-outline";
           } else if (route.name === "Setting") {
             iconName = focused ? "cog" : "cog-outline";
+          } else if (route.name === "Add") {
+            iconName = focused ? "add-circle" : "add-circle-outline";
           }
 
           // else if (route.name === "Settings") {
@@ -46,8 +51,10 @@ export default function UserStack() {
       })}
     >
       <Tab.Screen name="Home" component={HomeStackScreen} />
+      <Tab.Screen name="Add" component={AddRecipeStackScreen} />
       <Tab.Screen name="Favorites" component={FavoritesStackScreen} />
       {/* <Tab.Screen name="Test" component={TestStackScreen} /> */}
+
       <Tab.Screen name="Setting" component={SettingsStackScreen} />
     </Tab.Navigator>
   );
@@ -127,6 +134,16 @@ function ProfileStackScreen() {
       <ProfileStack.Screen name="Profile" component={Profile} />
       <ProfileStack.Screen name="Edit" component={Edit} />
     </ProfileStack.Navigator>
+  );
+}
+
+const AddRecipeStack = createNativeStackNavigator();
+
+function AddRecipeStackScreen() {
+  return (
+    <AddRecipeStack.Navigator screenOptions={{}}>
+      <AddRecipeStack.Screen name="AddRecipe" component={AddRecipe} />
+    </AddRecipeStack.Navigator>
   );
 }
 

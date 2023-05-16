@@ -37,9 +37,7 @@ const Favorites = () => {
 
   useEffect(() => {
     setLoading(true);
-    console.log("selam");
     if (user.user !== undefined && isFocused) {
-      console.log("xxxx");
       _getData(user.user.uid);
     }
     // if (Object.keys(snap).length !== 0) {
