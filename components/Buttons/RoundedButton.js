@@ -6,9 +6,15 @@ import { TouchableNativeFeedback } from "react-native";
 import { Pressable } from "react-native";
 
 const RoundedButton = (props) => {
-  const { text, buttonOnPress } = props;
+  const { text, buttonOnPress, mt } = props;
   return (
-    <Ripple onPress={buttonOnPress} style={styles.container}>
+    <Ripple
+      onPress={buttonOnPress}
+      style={[
+        styles.container,
+        { marginTop: mt === 0 ? 0 : verticalScale(20) },
+      ]}
+    >
       <Text style={styles.buttonText}>{text}</Text>
     </Ripple>
   );
@@ -23,7 +29,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: verticalScale(20),
+    // marginTop: verticalScale(20),
 
     shadowColor: "#000",
     shadowOffset: {
