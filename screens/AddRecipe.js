@@ -9,14 +9,36 @@ import RoundedButton from "../components/Buttons/RoundedButton";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { FlashList } from "@shopify/flash-list";
+import { useAuth } from "../hooks/useAuth";
+import { currentUserSnap } from "../hooks/getCurrentUserSnap";
+import { arrayUnion, increment, serverTimestamp } from "firebase/firestore";
+import { setCollection, storage, updateField } from "../utils/firebaseConfig";
+import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import HudView from "../components/HudView";
 
 const AddRecipe = () => {
-  const [title, setTitle] = useState("");
-  const [brief, setBrief] = useState("");
-  const [instructions, setInstructions] = useState("");
-  const [ingredients, setIngredients] = useState("");
-  const [cookTime, setCookTime] = useState("");
-  const [serve, setServe] = useState("");
+  // const user = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const [formData, setFormData] = useState({
+    title: "",
+    brief: "",
+    instructions: "",
+    ingredients: "",
+    cooktime: "",
+    serve: "",
+    preparationtime: "",
+  });
+
+  const updateFormField = (fieldName, value) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [fieldName]: value,
+    }));
+  };
+  const [snackbarAttr, setSnacbakAttr] = useState({});
+
   const [images, setImage] = useState([]);
 
   const textInputStyle = {
@@ -36,20 +58,16 @@ const AddRecipe = () => {
   };
 
   const textInputs = [
-    // numberOfLines: 5,
-    // keyboardType: "numeric",
     {
       title: "Title",
-      placeholder: "Write your title.",
-      setter: setTitle,
+      placeholder: "Title of your recipe.",
       multiline: false,
       maxLength: 50,
       ...textInputConstants,
     },
     {
       title: "Brief",
-      placeholder: "Write your brief.",
-      setter: setBrief,
+      placeholder: "Recipe brief.",
       multiline: true,
       maxLength: 500,
 
@@ -58,7 +76,6 @@ const AddRecipe = () => {
     {
       title: "Instructions",
       placeholder: "Write your instructions",
-      setter: setInstructions,
       multiline: true,
       maxLength: 450,
       ...textInputConstants,
@@ -66,15 +83,20 @@ const AddRecipe = () => {
     {
       title: "Ingredients",
       placeholder: "Write your instructions one under another.",
-      setter: setIngredients,
       multiline: true,
       maxLength: 400,
       ...textInputConstants,
     },
     {
+      title: "Preparation Time",
+      placeholder: "Preparation time as minute",
+      maxLength: 15,
+      keyboardType: "numeric",
+      ...textInputConstants,
+    },
+    {
       title: "Cook Time",
       placeholder: "Cook time for recipe as minute.",
-      setter: setCookTime,
       maxLength: 15,
       keyboardType: "numeric",
       ...textInputConstants,
@@ -82,7 +104,6 @@ const AddRecipe = () => {
     {
       title: "Serve",
       placeholder: "Serve for how many people?",
-      setter: setServe,
       maxLength: 15,
       keyboardType: "numeric",
       ...textInputConstants,
@@ -136,14 +157,82 @@ const AddRecipe = () => {
           variant="titleSmall"
           style={{ color: "tomato", marginLeft: horizontalScale(10) }}
         >
-          Please pick an image from your library
+          Please pick an image from your library.{"\n"}
+          Your first image will be cover image.
         </Text>
       </Pressable>
     );
   };
 
+  const _handleAddButton = async () => {
+    if (images.length > 0) {
+      setLoading(true);
+      const documentId = await setCollection("post", {
+        brief: formData.brief,
+        ingredient: formData.ingredients.split("\n"),
+        instruction: formData.instructions,
+        title: formData.title,
+        requierements: {
+          cooktime: formData.cooktime,
+          prepTime: formData.preparationtime,
+          servers: formData.serve,
+        },
+        uid: currentUserSnap().uid,
+        coverImagePath: "",
+        filePaths: [],
+        documentId: "",
+        addedBy: currentUserSnap().username,
+        timestamp: serverTimestamp(),
+        userPhoto: currentUserSnap().photoUrl,
+      });
+
+      images.map(async (img, index) => {
+        let imageName = "";
+        const response = await fetch(img);
+        const blob = await response.blob();
+        if (index === 0) {
+          imageName = "coverImage.jpg";
+        } else {
+          imageName = index + ".jpg";
+        }
+        const storageRef = ref(
+          storage,
+          `User/${currentUserSnap().uid}/post/${documentId}/${imageName}`
+        );
+
+        await uploadBytes(storageRef, blob);
+        getDownloadURL(storageRef).then((downloadURL) => {
+          updateField("post", documentId, {
+            documentId: documentId,
+            ...(index === 0
+              ? { coverImagePath: downloadURL }
+              : { filePaths: arrayUnion(downloadURL) }),
+          });
+          updateField("User", currentUserSnap().uid, {
+            numberOfPosts: increment(1),
+            post: arrayUnion(documentId),
+          }).then(() => {
+            setLoading(false);
+          });
+        });
+      });
+    } else if (Object.values(formData).every((value) => value === "")) {
+      setSnacbakAttr({
+        visible: true,
+        text: "Please fill the inputs.",
+      });
+    } else {
+      setSnacbakAttr({
+        visible: true,
+        text: "Please add an image to your recipe",
+      });
+    }
+  };
+
   return (
     <KeyboardAwareScrollView style={styles.container}>
+      {loading ? <HudView /> : null}
+
       {textInputs.map((input, index) => (
         <View key={index}>
           <Text variant="headlineSmall" style={styles.titleForInput}>
@@ -152,14 +241,20 @@ const AddRecipe = () => {
           <TextInput
             {...textInputStyle}
             {...input}
-            onChangeText={(val) => input.setter(val)}
+            // onChangeText={(val) => input.setter(val)}
+            onChangeText={(val) =>
+              updateFormField(input.title.replace(" ", "").toLowerCase(), val)
+            }
           />
         </View>
       ))}
-
       {_imageSelectButton()}
-
-      <View style={{ height: "10%", marginBottom: verticalScale(20) }}>
+      <View
+        style={{
+          height: "10%",
+          marginBottom: verticalScale(20),
+        }}
+      >
         <FlashList
           estimatedItemSize={100}
           data={images}
@@ -169,7 +264,17 @@ const AddRecipe = () => {
           }}
           keyExtractor={(_, index) => index.toString()}
         />
+
+        <View style={styles.addBtn}>
+          <RoundedButton mt={0} text="Add" buttonOnPress={_handleAddButton} />
+        </View>
       </View>
+
+      {snackbarAttr.visible === true ? (
+        <View style={styles.snackbarContainer}>
+          <CustomSnackbar snackbarAttr={snackbarAttr} setter={setSnacbakAttr} />
+        </View>
+      ) : null}
     </KeyboardAwareScrollView>
   );
 };
@@ -187,10 +292,6 @@ const styles = StyleSheet.create({
     color: COLORS.darkBlue,
     marginBottom: verticalScale(10),
     fontWeight: "bold",
-  },
-  addBtnContainer: {
-    marginHorizontal: moderateScale(50),
-    marginBottom: verticalScale(50),
   },
 
   imageContainer: {
@@ -217,7 +318,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     // width: "55%",
     padding: moderateScale(10),
-    marginBottom: verticalScale(30),
+    marginBottom: verticalScale(20),
     marginTop: verticalScale(10),
+    gap: moderateScale(15),
+  },
+
+  addBtn: {
+    width: "80%",
+    height: moderateScale(40),
+    alignSelf: "center",
+    marginBottom: verticalScale(50),
+  },
+  snackbarContainer: {
+    position: "absolute",
+    bottom: moderateScale(20),
+    width: "100%",
   },
 });

@@ -171,3 +171,12 @@ export const onSnap = async (collectionName, docField, field, setter) => {
   });
 };
 
+export const setCollection = async (name, data) => {
+  let id = "";
+  const ref = doc(collection(db, `${name}`));
+  await setDoc(ref, data).then(() => {
+    console.log("post succesfully added.");
+    id = ref.id;
+  });
+  return id;
+};

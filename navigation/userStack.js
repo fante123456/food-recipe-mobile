@@ -182,7 +182,7 @@ function FavoritesStackScreen() {
       />
       <HomeStack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
         name="Profile"
         component={Profile}
