@@ -233,17 +233,48 @@ const Recipe = ({ route, navigation }) => {
   const _header = () => {
     return (
       <View style={styles.header}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <AntDesign name="arrowleft" size={25} color="#fff" />
-        </Pressable>
-        <Text
+        <View
           style={{
-            color: "#fff",
-            fontSize: moderateScale(17),
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: moderateScale(10),
           }}
         >
-          Recipe Details
-        </Text>
+          <Pressable onPress={() => navigation.goBack()}>
+            <AntDesign name="arrowleft" size={25} color="#fff" />
+          </Pressable>
+          <Text
+            style={{
+              color: "#fff",
+              fontSize: moderateScale(17),
+            }}
+          >
+            Recipe Details
+          </Text>
+        </View>
+
+        <View>
+          {snap.uid === currentUserSnap().uid ? (
+            <Pressable
+              onPress={() => {
+                navigation.navigate("AddRecipe", {
+                  editPostSnap: snap,
+                });
+              }}
+            >
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: moderateScale(17),
+                  alignSelf: "flex-end",
+                }}
+              >
+                Edit
+              </Text>
+            </Pressable>
+          ) : null}
+        </View>
       </View>
     );
   };
@@ -324,6 +355,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: verticalScale(20),
+    justifyContent: "space-between",
   },
   scrollView: {
     flex: 1,

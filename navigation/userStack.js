@@ -101,6 +101,14 @@ function HomeStackScreen() {
         name="Edit"
         component={Edit}
       />
+
+      <HomeStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="AddRecipe"
+        component={AddRecipe}
+      />
     </HomeStack.Navigator>
   );
 }

@@ -1,5 +1,5 @@
 import { StyleSheet, View, Pressable, Image } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
@@ -11,25 +11,51 @@ import * as ImagePicker from "expo-image-picker";
 import { FlashList } from "@shopify/flash-list";
 import { useAuth } from "../hooks/useAuth";
 import { currentUserSnap } from "../hooks/getCurrentUserSnap";
-import { arrayUnion, increment, serverTimestamp } from "firebase/firestore";
+import {
+  arrayRemove,
+  arrayUnion,
+  increment,
+  serverTimestamp,
+} from "firebase/firestore";
 import { setCollection, storage, updateField } from "../utils/firebaseConfig";
 import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+  listAll,
+} from "firebase/storage";
 import HudView from "../components/HudView";
+import { useIsFocused } from "@react-navigation/native";
 
-const AddRecipe = () => {
+const AddRecipe = ({ route, navigation }) => {
+  const { editPostSnap } = route.params ? route.params : {};
   // const user = useAuth();
+
   const [loading, setLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    brief: "",
-    instructions: "",
-    ingredients: "",
-    cooktime: "",
-    serve: "",
-    preparationtime: "",
-  });
+  const [formData, setFormData] = useState(
+    editPostSnap
+      ? {
+          title: editPostSnap.title,
+          brief: editPostSnap.brief,
+          instructions: editPostSnap.instruction,
+          ingredients: editPostSnap.ingredient.map((val) => val).join("\n"),
+          cooktime: editPostSnap.requierements.cooktime,
+          serve: editPostSnap.requierements.serve,
+          preparationtime: editPostSnap.requierements.prepTime,
+        }
+      : {
+          title: "",
+          brief: "",
+          instructions: "",
+          ingredients: "",
+          cooktime: "",
+          serve: "",
+          preparationtime: "",
+        }
+  );
 
   const updateFormField = (fieldName, value) => {
     setFormData((prevFormData) => ({
@@ -39,7 +65,13 @@ const AddRecipe = () => {
   };
   const [snackbarAttr, setSnacbakAttr] = useState({});
 
-  const [images, setImage] = useState([]);
+  const [images, setImage] = useState(
+    editPostSnap ? [editPostSnap.coverImagePath, ...editPostSnap.filePaths] : []
+  );
+
+  const [editLength, setEditLength] = useState(
+    editPostSnap ? editPostSnap.filePaths.length + 1 : 0
+  );
 
   const textInputStyle = {
     textAlignVertical: "top",
@@ -64,14 +96,16 @@ const AddRecipe = () => {
       multiline: false,
       maxLength: 50,
       ...textInputConstants,
+      value: formData.title,
     },
     {
       title: "Brief",
       placeholder: "Recipe brief.",
       multiline: true,
       maxLength: 500,
-
       ...textInputConstants,
+
+      value: formData.brief,
     },
     {
       title: "Instructions",
@@ -79,6 +113,7 @@ const AddRecipe = () => {
       multiline: true,
       maxLength: 450,
       ...textInputConstants,
+      value: formData.instructions,
     },
     {
       title: "Ingredients",
@@ -86,6 +121,7 @@ const AddRecipe = () => {
       multiline: true,
       maxLength: 400,
       ...textInputConstants,
+      value: formData.ingredients,
     },
     {
       title: "Preparation Time",
@@ -93,6 +129,7 @@ const AddRecipe = () => {
       maxLength: 15,
       keyboardType: "numeric",
       ...textInputConstants,
+      value: formData.preparationtime,
     },
     {
       title: "Cook Time",
@@ -100,6 +137,7 @@ const AddRecipe = () => {
       maxLength: 15,
       keyboardType: "numeric",
       ...textInputConstants,
+      value: formData.cooktime,
     },
     {
       title: "Serve",
@@ -107,6 +145,7 @@ const AddRecipe = () => {
       maxLength: 15,
       keyboardType: "numeric",
       ...textInputConstants,
+      value: formData.serve,
     },
   ];
 
@@ -158,7 +197,7 @@ const AddRecipe = () => {
           style={{ color: "tomato", marginLeft: horizontalScale(10) }}
         >
           Please pick an image from your library.{"\n"}
-          Your first image will be cover image.
+          Your first image will be recipe cover image.
         </Text>
       </Pressable>
     );
@@ -175,7 +214,7 @@ const AddRecipe = () => {
         requierements: {
           cooktime: formData.cooktime,
           prepTime: formData.preparationtime,
-          servers: formData.serve,
+          serve: formData.serve,
         },
         uid: currentUserSnap().uid,
         coverImagePath: "",
@@ -229,6 +268,106 @@ const AddRecipe = () => {
     }
   };
 
+  const _deleteImageFromStorage = (imageName) => {
+    const strRef = ref(
+      storage,
+      `User/${currentUserSnap().uid}/post/${
+        editPostSnap.documentId
+      }/${imageName}.jpg`
+    );
+
+    // Delete the file
+    deleteObject(strRef)
+      .then(() => {
+        console.log("deleted succesfully");
+      })
+      .catch((error) => {
+        console.log("error");
+      });
+  };
+
+  const _handleEditButton = () => {
+    let count = 0;
+
+    if (images.length > 0) {
+      Array.from({ length: editLength }, (_, index) => {
+        _deleteImageFromStorage(index + 1);
+      });
+      _deleteImageFromStorage("coverImage.jpg");
+
+      setLoading(true);
+
+      //clear filepath cause we upload image after deletion
+      updateField("post", editPostSnap.documentId, {
+        filePaths: [],
+      });
+      images.map(async (img, index) => {
+        try {
+          const response = await fetch(img);
+          const blob = await response.blob();
+
+          let imageName = "";
+          if (index === 0) {
+            imageName = "coverImage.jpg";
+          } else {
+            imageName = index + ".jpg";
+          }
+
+          const storageRef = ref(
+            storage,
+            `User/${currentUserSnap().uid}/post/${
+              editPostSnap.documentId
+            }/${imageName}`
+          );
+
+          await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
+
+          const downloadURL = await getDownloadURL(storageRef);
+
+          if (index === 0) {
+            updateField("post", editPostSnap.documentId, {
+              coverImagePath: downloadURL,
+              ...(images.length === 1 && { filePaths: [] }),
+            });
+          } else {
+            updateField("post", editPostSnap.documentId, {
+              filePaths: arrayUnion(downloadURL),
+            });
+            count++;
+          }
+
+          setLoading(false);
+          setEditLength(count);
+        } catch (error) {
+          console.error("Error updating image:", error);
+          setLoading(false);
+        }
+      });
+      updateField("post", editPostSnap.documentId, {
+        documentId: editPostSnap.documentId,
+        brief: formData.brief,
+        ingredient: formData.ingredients.split("\n"),
+        instruction: formData.instructions,
+        title: formData.title,
+        requierements: {
+          cooktime: formData.cooktime,
+          prepTime: formData.preparationtime,
+          serve: formData.serve,
+        },
+      });
+    } else if (Object.values(formData).every((value) => value === "")) {
+      setSnacbakAttr({
+        visible: true,
+        text: "Please fill the inputs.",
+      });
+    } else {
+      setSnacbakAttr({
+        visible: true,
+        text: "Please add an image to your recipe",
+      });
+    }
+  };
+
   return (
     <KeyboardAwareScrollView style={styles.container}>
       {loading ? <HudView /> : null}
@@ -242,9 +381,9 @@ const AddRecipe = () => {
             {...textInputStyle}
             {...input}
             // onChangeText={(val) => input.setter(val)}
-            onChangeText={(val) =>
-              updateFormField(input.title.replace(" ", "").toLowerCase(), val)
-            }
+            onChangeText={(val) => {
+              updateFormField(input.title.replace(" ", "").toLowerCase(), val);
+            }}
           />
         </View>
       ))}
@@ -266,7 +405,11 @@ const AddRecipe = () => {
         />
 
         <View style={styles.addBtn}>
-          <RoundedButton mt={0} text="Add" buttonOnPress={_handleAddButton} />
+          <RoundedButton
+            mt={0}
+            text={editPostSnap ? "Update" : "Add"}
+            buttonOnPress={editPostSnap ? _handleEditButton : _handleAddButton}
+          />
         </View>
       </View>
 
