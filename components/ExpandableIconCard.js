@@ -6,6 +6,7 @@ import {
   LayoutAnimation,
   Animated,
   useWindowDimensions,
+  Image,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { horizontalScale, moderateScale, verticalScale } from "../Metrics";
@@ -68,8 +69,43 @@ const ExpandableIconCard = (props) => {
                 width: "80%",
               }}
             >
-              {title !== "Ingredients" ? (
+              {title === "Recipe Pictures" ? (
+                content.map((img, index) => {
+                  return (
+                    <Image
+                      source={{ uri: img }}
+                      style={styles.image}
+                      key={index}
+                    />
+                  );
+                })
+              ) : title === "Ingredients" ? (
+                content.map((ingredient, index) => {
+                  let ing = uid === "admin" ? ingredient.original : ingredient;
+                  return (
+                    <View
+                      key={index}
+                      style={{
+                        flexDirection: "row",
+                        gap: verticalScale(20),
+                        padding: moderateScale(5),
+                      }}
+                    >
+                      <Ionicons name="ellipse-sharp" size={20} color="tomato" />
+                      <Text>{ing}</Text>
+                    </View>
+                  );
+                })
+              ) : (
                 <Text style={{ fontSize: 16 }}>{content}</Text>
+              )}
+
+              {/* {title !== "Ingredients" ? (
+                <Text style={{ fontSize: 16 }}>{content}</Text>
+              ) : title === "Recipe Pictures" ? (
+                content.map((img, _) => {
+                  <Image source={{ uri: img }} style={styles.image} />;
+                })
               ) : (
                 content.map((ingredient, index) => {
                   let ing = uid === "admin" ? ingredient.original : ingredient;
@@ -87,7 +123,7 @@ const ExpandableIconCard = (props) => {
                     </View>
                   );
                 })
-              )}
+              )} */}
             </View>
           </>
         ) : null}
@@ -118,5 +154,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: moderateScale(10),
+  },
+  image: {
+    resizeMode: "stretch",
+    flex: 1,
+    width: "100%",
+    height: moderateScale(180),
+    borderRadius: moderateScale(12),
+    marginBottom: verticalScale(20),
   },
 });

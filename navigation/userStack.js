@@ -104,7 +104,7 @@ function HomeStackScreen() {
 
       <HomeStack.Screen
         options={{
-          headerShown: true,
+          headerShown: false,
         }}
         name="AddRecipe"
         component={AddRecipe}
@@ -149,7 +149,7 @@ const AddRecipeStack = createNativeStackNavigator();
 
 function AddRecipeStackScreen() {
   return (
-    <AddRecipeStack.Navigator screenOptions={{}}>
+    <AddRecipeStack.Navigator screenOptions={{ headerShown: false }}>
       <AddRecipeStack.Screen name="AddRecipe" component={AddRecipe} />
     </AddRecipeStack.Navigator>
   );

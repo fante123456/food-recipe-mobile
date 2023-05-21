@@ -228,6 +228,12 @@ const Recipe = ({ route, navigation }) => {
       content: snap.ingredient,
       uid: snap.uid,
     },
+    {
+      icon: <MaterialCommunityIcons name="image-outline" size={24} />,
+      title: "Recipe Pictures",
+      content: snap.filePaths,
+      uid: snap.uid,
+    },
   ];
 
   const _header = () => {

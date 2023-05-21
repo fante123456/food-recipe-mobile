@@ -28,6 +28,8 @@ import {
 } from "firebase/storage";
 import HudView from "../components/HudView";
 import { useIsFocused } from "@react-navigation/native";
+import Header from "../components/Navigation/Header";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const AddRecipe = ({ route, navigation }) => {
   const { editPostSnap } = route.params ? route.params : {};
@@ -42,7 +44,7 @@ const AddRecipe = ({ route, navigation }) => {
           brief: editPostSnap.brief,
           instructions: editPostSnap.instruction,
           ingredients: editPostSnap.ingredient.map((val) => val).join("\n"),
-          cooktime: editPostSnap.requierements.cooktime,
+          cooktime: editPostSnap.requierements.cookTime,
           serve: editPostSnap.requierements.serve,
           preparationtime: editPostSnap.requierements.prepTime,
         }
@@ -212,7 +214,7 @@ const AddRecipe = ({ route, navigation }) => {
         instruction: formData.instructions,
         title: formData.title,
         requierements: {
-          cooktime: formData.cooktime,
+          cookTime: formData.cooktime,
           prepTime: formData.preparationtime,
           serve: formData.serve,
         },
@@ -268,7 +270,7 @@ const AddRecipe = ({ route, navigation }) => {
     }
   };
 
-  const _deleteImageFromStorage = (imageName) => {
+  const _deleteImageFromStorage = async (imageName) => {
     const strRef = ref(
       storage,
       `User/${currentUserSnap().uid}/post/${
@@ -276,7 +278,6 @@ const AddRecipe = ({ route, navigation }) => {
       }/${imageName}.jpg`
     );
 
-    // Delete the file
     deleteObject(strRef)
       .then(() => {
         console.log("deleted succesfully");
@@ -286,26 +287,15 @@ const AddRecipe = ({ route, navigation }) => {
       });
   };
 
-  const _handleEditButton = () => {
-    let count = 0;
-
+  const _handleEditButton = async () => {
     if (images.length > 0) {
-      Array.from({ length: editLength }, (_, index) => {
-        _deleteImageFromStorage(index + 1);
-      });
-      _deleteImageFromStorage("coverImage.jpg");
-
-      setLoading(true);
-
-      //clear filepath cause we upload image after deletion
       updateField("post", editPostSnap.documentId, {
         filePaths: [],
       });
       images.map(async (img, index) => {
+        const response = await fetch(img);
+        const blob = await response.blob();
         try {
-          const response = await fetch(img);
-          const blob = await response.blob();
-
           let imageName = "";
           if (index === 0) {
             imageName = "coverImage.jpg";
@@ -320,27 +310,25 @@ const AddRecipe = ({ route, navigation }) => {
             }/${imageName}`
           );
 
-          await uploadBytes(storageRef, blob, { contentType: "image/jpeg" });
+          await uploadBytes(storageRef, blob, {
+            contentType: "image/jpeg",
+          });
 
-          const downloadURL = await getDownloadURL(storageRef);
-
-          if (index === 0) {
-            updateField("post", editPostSnap.documentId, {
-              coverImagePath: downloadURL,
-              ...(images.length === 1 && { filePaths: [] }),
-            });
-          } else {
-            updateField("post", editPostSnap.documentId, {
-              filePaths: arrayUnion(downloadURL),
-            });
-            count++;
-          }
-
-          setLoading(false);
-          setEditLength(count);
+          getDownloadURL(storageRef).then((downloadURL) => {
+            if (index === 0) {
+              updateField("post", editPostSnap.documentId, {
+                coverImagePath: downloadURL,
+                ...(images.length === 1 && { filePaths: [] }),
+              });
+            } else {
+              updateField("post", editPostSnap.documentId, {
+                filePaths: arrayUnion(downloadURL),
+              });
+            }
+            setLoading(false);
+          });
         } catch (error) {
           console.error("Error updating image:", error);
-          setLoading(false);
         }
       });
       updateField("post", editPostSnap.documentId, {
@@ -350,11 +338,28 @@ const AddRecipe = ({ route, navigation }) => {
         instruction: formData.instructions,
         title: formData.title,
         requierements: {
-          cooktime: formData.cooktime,
+          cookTime: formData.cooktime,
           prepTime: formData.preparationtime,
           serve: formData.serve,
         },
+      }).then(() => {
+        setLoading(false);
       });
+
+      setLoading(true);
+
+      //delete the older image(s)
+      for (let i = images.length; i < images.length + 1; i++) {
+        console.log("endless looopp");
+        const imageName = i;
+
+        const deleted = await _deleteImageFromStorage(imageName);
+        if (deleted) {
+          console.log("Image deleted successfully");
+        } else {
+          console.log("not found in the storage");
+        }
+      }
     } else if (Object.values(formData).every((value) => value === "")) {
       setSnacbakAttr({
         visible: true,
@@ -369,56 +374,71 @@ const AddRecipe = ({ route, navigation }) => {
   };
 
   return (
-    <KeyboardAwareScrollView style={styles.container}>
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+      <Header
+        handlePress={() => navigation.goBack()}
+        color="black"
+        headerTitle="Add Recipe"
+      />
       {loading ? <HudView /> : null}
 
-      {textInputs.map((input, index) => (
-        <View key={index}>
-          <Text variant="headlineSmall" style={styles.titleForInput}>
-            {input.title}
-          </Text>
-          <TextInput
-            {...textInputStyle}
-            {...input}
-            // onChangeText={(val) => input.setter(val)}
-            onChangeText={(val) => {
-              updateFormField(input.title.replace(" ", "").toLowerCase(), val);
-            }}
-          />
-        </View>
-      ))}
-      {_imageSelectButton()}
-      <View
-        style={{
-          height: "10%",
-          marginBottom: verticalScale(20),
-        }}
-      >
-        <FlashList
-          estimatedItemSize={100}
-          data={images}
-          numColumns={2}
-          renderItem={({ item }) => {
-            return <ImageItem imgUri={item} />;
+      <KeyboardAwareScrollView style={styles.container}>
+        {textInputs.map((input, index) => (
+          <View key={index}>
+            <Text variant="headlineSmall" style={styles.titleForInput}>
+              {input.title}
+            </Text>
+            <TextInput
+              {...textInputStyle}
+              {...input}
+              // onChangeText={(val) => input.setter(val)}
+              onChangeText={(val) => {
+                updateFormField(
+                  input.title.replace(" ", "").toLowerCase(),
+                  val
+                );
+              }}
+            />
+          </View>
+        ))}
+        {_imageSelectButton()}
+        <View
+          style={{
+            height: "10%",
+            marginBottom: verticalScale(20),
           }}
-          keyExtractor={(_, index) => index.toString()}
-        />
-
-        <View style={styles.addBtn}>
-          <RoundedButton
-            mt={0}
-            text={editPostSnap ? "Update" : "Add"}
-            buttonOnPress={editPostSnap ? _handleEditButton : _handleAddButton}
+        >
+          <FlashList
+            estimatedItemSize={100}
+            data={images}
+            numColumns={2}
+            renderItem={({ item }) => {
+              return <ImageItem imgUri={item} />;
+            }}
+            keyExtractor={(_, index) => index.toString()}
           />
-        </View>
-      </View>
 
-      {snackbarAttr.visible === true ? (
-        <View style={styles.snackbarContainer}>
-          <CustomSnackbar snackbarAttr={snackbarAttr} setter={setSnacbakAttr} />
+          <View style={styles.addBtn}>
+            <RoundedButton
+              mt={0}
+              text={editPostSnap ? "Update" : "Add"}
+              buttonOnPress={
+                editPostSnap ? _handleEditButton : _handleAddButton
+              }
+            />
+          </View>
         </View>
-      ) : null}
-    </KeyboardAwareScrollView>
+
+        {snackbarAttr.visible === true ? (
+          <View style={styles.snackbarContainer}>
+            <CustomSnackbar
+              snackbarAttr={snackbarAttr}
+              setter={setSnacbakAttr}
+            />
+          </View>
+        ) : null}
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 };
 // https://firebasestorage.googleapis.com/v0/b/recipe-app-c5434.appspot.com/o/User%2FrVs5B9Qh2iM6qODCbR8AuzmIxHI2%2Fprofile%2FprofilePicture.jpg?alt=media&token=aa7e31cd-0606-4e8f-8391-7ff0f8f64588
@@ -426,9 +446,9 @@ export default AddRecipe;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: "#fff",
     padding: moderateScale(20),
+    flex: 1,
   },
 
   titleForInput: {
