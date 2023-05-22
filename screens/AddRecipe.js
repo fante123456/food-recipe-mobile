@@ -1,4 +1,4 @@
-import { StyleSheet, View, Pressable, Image } from "react-native";
+import { StyleSheet, View, Pressable, Image, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -14,10 +14,17 @@ import { currentUserSnap } from "../hooks/getCurrentUserSnap";
 import {
   arrayRemove,
   arrayUnion,
+  deleteDoc,
   increment,
   serverTimestamp,
 } from "firebase/firestore";
-import { setCollection, storage, updateField } from "../utils/firebaseConfig";
+import {
+  deleteFromCollection,
+  deletePostFromUser,
+  setCollection,
+  storage,
+  updateField,
+} from "../utils/firebaseConfig";
 import CustomSnackbar from "../components/Buttons/Alert/CustomSnackbar";
 import {
   ref,
@@ -242,20 +249,23 @@ const AddRecipe = ({ route, navigation }) => {
         );
 
         await uploadBytes(storageRef, blob);
-        getDownloadURL(storageRef).then((downloadURL) => {
-          updateField("post", documentId, {
-            documentId: documentId,
-            ...(index === 0
-              ? { coverImagePath: downloadURL }
-              : { filePaths: arrayUnion(downloadURL) }),
+        getDownloadURL(storageRef)
+          .then((downloadURL) => {
+            updateField("post", documentId, {
+              documentId: documentId,
+              ...(index === 0
+                ? { coverImagePath: downloadURL }
+                : { filePaths: arrayUnion(downloadURL) }),
+            });
+          })
+          .then(() => {
+            updateField("User", currentUserSnap().uid, {
+              numberOfPosts: increment(1),
+              post: arrayUnion(documentId),
+            }).then(() => {
+              setLoading(false);
+            });
           });
-          updateField("User", currentUserSnap().uid, {
-            numberOfPosts: increment(1),
-            post: arrayUnion(documentId),
-          }).then(() => {
-            setLoading(false);
-          });
-        });
       });
     } else if (Object.values(formData).every((value) => value === "")) {
       setSnacbakAttr({
@@ -373,17 +383,62 @@ const AddRecipe = ({ route, navigation }) => {
     }
   };
 
+  const _deletePost = () => {
+    Alert.alert(
+      "Delete",
+      "Are you sure you want to permanently delete the post?",
+      [
+        {
+          text: "Ok",
+          onPress: async () => {
+            setLoading(true);
+            await deleteFromCollection("post", editPostSnap.documentId);
+            await deletePostFromUser(
+              editPostSnap.addedBy,
+              editPostSnap.documentId
+            );
+            setLoading(false);
+            navigation.navigate("HomePage");
+          },
+        },
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
-      <Header
-        handlePress={() =>
-          navigation.goBack("Profile", {
-            userSnap: editPostSnap,
-          })
-        }
-        color="black"
-        headerTitle="Add Recipe"
-      />
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          alignItems: "flex-end",
+          marginHorizontal: horizontalScale(15),
+        }}
+      >
+        <Header
+          handlePress={() =>
+            navigation.goBack("Profile", {
+              userSnap: editPostSnap,
+            })
+          }
+          color="black"
+          headerTitle={editPostSnap ? "Edit Recipe" : "Add Recipe"}
+        />
+        {editPostSnap ? (
+          <Ionicons
+            name="trash-bin"
+            size={24}
+            color={"tomato"}
+            onPress={_deletePost}
+          />
+        ) : null}
+      </View>
+
       {loading ? <HudView /> : null}
 
       <KeyboardAwareScrollView style={styles.container}>

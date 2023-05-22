@@ -9,6 +9,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  increment,
   onSnapshot,
   orderBy,
   query,
@@ -179,4 +180,16 @@ export const setCollection = async (name, data) => {
     id = ref.id;
   });
   return id;
+};
+
+export const deleteFromCollection = async (collectionName, docId) => {
+  await deleteDoc(doc(db, collectionName, `${docId}`));
+};
+
+export const deletePostFromUser = async (addedBy, docId) => {
+  let doc = await getCollectionByField("User", "username", `${addedBy}`);
+  await updateField("User", doc.uid, {
+    post: arrayRemove(docId),
+    numberOfPosts: increment(-1),
+  });
 };
