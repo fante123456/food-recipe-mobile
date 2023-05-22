@@ -288,77 +288,77 @@ const AddRecipe = ({ route, navigation }) => {
   };
 
   const _handleEditButton = async () => {
+    let fpath = [];
+
     if (images.length > 0) {
-      updateField("post", editPostSnap.documentId, {
-        filePaths: [],
-      });
-      images.map(async (img, index) => {
-        const response = await fetch(img);
-        const blob = await response.blob();
-        try {
-          let imageName = "";
-          if (index === 0) {
-            imageName = "coverImage.jpg";
-          } else {
-            imageName = index + ".jpg";
-          }
+      try {
+        setLoading(true);
 
-          const storageRef = ref(
-            storage,
-            `User/${currentUserSnap().uid}/post/${
-              editPostSnap.documentId
-            }/${imageName}`
-          );
+        await Promise.all(
+          images.map(async (img, index) => {
+            const response = await fetch(img);
+            const blob = await response.blob();
 
-          await uploadBytes(storageRef, blob, {
-            contentType: "image/jpeg",
-          });
+            let imageName = "";
+            if (index === 0) {
+              imageName = "coverImage.jpg";
+            } else {
+              imageName = index + ".jpg";
+            }
 
-          getDownloadURL(storageRef).then((downloadURL) => {
+            const storageRef = ref(
+              storage,
+              `User/${currentUserSnap().uid}/post/${
+                editPostSnap.documentId
+              }/${imageName}`
+            );
+
+            await uploadBytes(storageRef, blob, {
+              contentType: "image/jpeg",
+            });
+
+            const downloadURL = await getDownloadURL(storageRef);
             if (index === 0) {
               updateField("post", editPostSnap.documentId, {
                 coverImagePath: downloadURL,
                 ...(images.length === 1 && { filePaths: [] }),
               });
             } else {
-              updateField("post", editPostSnap.documentId, {
-                filePaths: arrayUnion(downloadURL),
-              });
+              fpath.push(downloadURL);
+            }
+          })
+        );
+
+        updateField("post", editPostSnap.documentId, {
+          documentId: editPostSnap.documentId,
+          brief: formData.brief,
+          ingredient: formData.ingredients.split("\n"),
+          instruction: formData.instructions,
+          title: formData.title,
+          requirements: {
+            cookTime: formData.cooktime,
+            prepTime: formData.preparationtime,
+            serve: formData.serve,
+          },
+          filePaths: fpath,
+        }).then(async () => {
+          //delete the older image(s)
+          for (let i = images.length; i < images.length + 1; i++) {
+            console.log("endless looopp");
+            const imageName = i;
+
+            const deleted = await _deleteImageFromStorage(imageName);
+            if (deleted) {
+              console.log("Image deleted successfully");
+            } else {
+              console.log("not found in the storage");
             }
             setLoading(false);
-          });
-        } catch (error) {
-          console.error("Error updating image:", error);
-        }
-      });
-      updateField("post", editPostSnap.documentId, {
-        documentId: editPostSnap.documentId,
-        brief: formData.brief,
-        ingredient: formData.ingredients.split("\n"),
-        instruction: formData.instructions,
-        title: formData.title,
-        requierements: {
-          cookTime: formData.cooktime,
-          prepTime: formData.preparationtime,
-          serve: formData.serve,
-        },
-      }).then(() => {
+          }
+        });
+      } catch (error) {
+        console.error("Error updating image:", error);
         setLoading(false);
-      });
-
-      setLoading(true);
-
-      //delete the older image(s)
-      for (let i = images.length; i < images.length + 1; i++) {
-        console.log("endless looopp");
-        const imageName = i;
-
-        const deleted = await _deleteImageFromStorage(imageName);
-        if (deleted) {
-          console.log("Image deleted successfully");
-        } else {
-          console.log("not found in the storage");
-        }
       }
     } else if (Object.values(formData).every((value) => value === "")) {
       setSnacbakAttr({
@@ -376,7 +376,11 @@ const AddRecipe = ({ route, navigation }) => {
   return (
     <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
       <Header
-        handlePress={() => navigation.goBack()}
+        handlePress={() =>
+          navigation.goBack("Profile", {
+            userSnap: editPostSnap,
+          })
+        }
         color="black"
         headerTitle="Add Recipe"
       />
