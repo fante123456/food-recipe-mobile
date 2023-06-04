@@ -84,12 +84,12 @@ const Home = () => {
     //   docField: "category",
     //   propTitle: "Popular",
     // },
-    // {
-    //   id: 3,
-    //   field: "user",
-    //   docField: "category",
-    //   propTitle: "User Recipes",
-    // },
+    {
+      id: 3,
+      field: "user",
+      docField: "category",
+      propTitle: "User Recipes",
+    },
   ];
   return (
     <SafeAreaView style={styles.container}>

@@ -232,6 +232,7 @@ const AddRecipe = ({ route, navigation }) => {
         addedBy: currentUserSnap().username,
         timestamp: serverTimestamp(),
         userPhoto: currentUserSnap().photoUrl,
+        category: "user",
       });
 
       images.map(async (img, index) => {

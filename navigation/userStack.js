@@ -12,6 +12,7 @@ import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
 import Edit from "../screens/Edit";
 import AddRecipe from "../screens/AddRecipe";
+import MyFeed from "../screens/MyFeed";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,6 +38,8 @@ export default function UserStack() {
             iconName = focused ? "cog" : "cog-outline";
           } else if (route.name === "Add") {
             iconName = focused ? "add-circle" : "add-circle-outline";
+          } else if (route.name === "Feed") {
+            iconName = focused ? "newspaper" : "newspaper-outline";
           }
 
           // else if (route.name === "Settings") {
@@ -54,6 +57,7 @@ export default function UserStack() {
       <Tab.Screen name="Add" component={AddRecipeStackScreen} />
       <Tab.Screen name="Favorites" component={FavoritesStackScreen} />
       {/* <Tab.Screen name="Test" component={TestStackScreen} /> */}
+      <Tab.Screen name="Feed" component={MyFeedStackScreen} />
 
       <Tab.Screen name="Setting" component={SettingsStackScreen} />
     </Tab.Navigator>
@@ -131,6 +135,23 @@ function SettingsStackScreen() {
       <SettingsStack.Screen name="Settings" component={Settings} />
       <SettingsStack.Screen name="Login" component={Login} />
     </SettingsStack.Navigator>
+  );
+}
+
+const MyFeedStack = createNativeStackNavigator();
+
+function MyFeedStackScreen() {
+  return (
+    <MyFeedStack.Navigator screenOptions={{ headerShown: false }}>
+      <MyFeedStack.Screen name="MyFeed" component={MyFeed} />
+      <MyFeedStack.Screen
+        name="RecipePage"
+        component={Recipe}
+        options={{
+          headerStyle: { backgroundColor: "#fff" },
+        }}
+      />
+    </MyFeedStack.Navigator>
   );
 }
 

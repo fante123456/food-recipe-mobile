@@ -129,6 +129,20 @@ export const getFavorites = async (favoritesArray, setSnap) => {
   });
   return data;
 };
+export const getPosts = async (postsArray, setSnap) => {
+  let data = [];
+  const postRef = collection(db, "post");
+
+  const q = query(postRef, where("documentId", "in", postsArray));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    // console.log(doc.id, " => ", doc.data());
+
+    data.push(doc.data());
+  });
+  return data;
+};
 
 export const updateField = async (collection, uid, updatedField) => {
   let status = false;
