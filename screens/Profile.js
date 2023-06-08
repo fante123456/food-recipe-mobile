@@ -89,6 +89,7 @@ const Profile = ({ route, navigation }) => {
           justifyContent: "center",
         }}
         onPress={() => {
+          console.log(itemSnap.documentId);
           navigation.push("RecipePage", {
             snap: itemSnap,
             rating: ratingOfTheItem,

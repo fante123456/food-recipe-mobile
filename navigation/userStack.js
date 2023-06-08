@@ -151,6 +151,13 @@ function MyFeedStackScreen() {
           headerStyle: { backgroundColor: "#fff" },
         }}
       />
+      <MyFeedStack.Screen
+        options={{
+          headerShown: true,
+        }}
+        name="Comments"
+        component={Comments}
+      />
     </MyFeedStack.Navigator>
   );
 }

@@ -261,12 +261,15 @@ const AddRecipe = ({ route, navigation }) => {
           })
           .then(() => {
             updateField("User", currentUserSnap().uid, {
-              numberOfPosts: increment(1),
+              // numberOfPosts: increment(1),
               post: arrayUnion(documentId),
             }).then(() => {
               setLoading(false);
             });
           });
+      });
+      updateField("User", currentUserSnap().uid, {
+        numberOfPosts: increment(1),
       });
     } else if (Object.values(formData).every((value) => value === "")) {
       setSnacbakAttr({
@@ -346,7 +349,7 @@ const AddRecipe = ({ route, navigation }) => {
           ingredient: formData.ingredients.split("\n"),
           instruction: formData.instructions,
           title: formData.title,
-          requirements: {
+          requierements: {
             cookTime: formData.cooktime,
             prepTime: formData.preparationtime,
             serve: formData.serve,
@@ -393,13 +396,38 @@ const AddRecipe = ({ route, navigation }) => {
           text: "Ok",
           onPress: async () => {
             setLoading(true);
-            await deleteFromCollection("post", editPostSnap.documentId);
-            await deletePostFromUser(
-              editPostSnap.addedBy,
+            const folderPath = `User/${currentUserSnap().uid}/post/${
               editPostSnap.documentId
-            );
-            setLoading(false);
-            navigation.navigate("HomePage");
+            }/`;
+
+            // Create a reference to the folder
+            const folderRef = ref(storage, folderPath);
+
+            // List all items within the folder
+            listAll(folderRef)
+              .then((result) => {
+                // Iterate through the items and delete them
+                result.items.map((itemRef) => deleteObject(itemRef));
+              })
+              .then(() => {
+                deleteObject(folderRef);
+              })
+              .then(() => {
+                console.log("Folder and its contents deleted successfully.");
+              })
+              .catch((error) => {
+                console.error("Error deleting folder and its contents:", error);
+              })
+              .finally(async () => {
+                await deleteFromCollection("post", editPostSnap.documentId);
+                await deletePostFromUser(
+                  editPostSnap.addedBy,
+                  editPostSnap.documentId
+                );
+
+                setLoading(false);
+                navigation.navigate("HomePage");
+              });
           },
         },
         {

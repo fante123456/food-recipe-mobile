@@ -133,7 +133,8 @@ const MyFeed = () => {
         <FlatList
           showsHorizontalScrollIndicator={false}
           scrool
-          data={snap} // 4 tane var see all ile hepsini goster !
+          // data={snap} // 4 tane var see all ile hepsini goster !
+          data={snap.sort((a, b) => b.timestamp - a.timestamp)}
           renderItem={({ item }) => {
             return (
               <Item
