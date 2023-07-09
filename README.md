@@ -85,6 +85,21 @@ To use the Food Recipe Mobile application, follow these steps:
     - Go to the recipe details page.
     - Tap the "Delete" button.
     - Confirm the deletion to remove the recipe from the collection.
+
+## Example Images
+<img src="https://github.com/batorovic/food-recipe-mobile/assets/33568252/bf72ffa2-976f-47dc-ad1d-08f69bc1aa5c" width="400" height="700">
+<img src="https://github.com/batorovic/food-recipe-mobile/assets/33568252/2f022ef7-9b1a-4be1-bd2c-795d02216e76"  width="400" height="700">
+<img src="https://github.com/batorovic/food-recipe-mobile/assets/33568252/212170e7-6b3f-487f-85a6-5a6d57ed5584"  width="400" height="700">
+<img src="https://github.com/batorovic/food-recipe-mobile/assets/33568252/d1fa12ba-e612-4bf4-8be7-21a1258ef282"  width="400" height="700">
+<img src="https://github.com/batorovic/food-recipe-mobile/assets/33568252/a690f5c5-360f-42cb-b88f-505c1b0518b4"  width="400" height="700">
+<img src="https://github.com/batorovic/food-recipe-mobile/assets/33568252/829026d4-db69-4a16-9b02-20a42f94852c"  width="400" height="700">
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+
+
+
+
+
